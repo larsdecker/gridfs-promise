@@ -1,0 +1,25 @@
+{
+  "name": "larsdecker/gridfs-promise",
+  "description": "Uses the native GridFSBucket-Api from the new MongoDB NodeJS Driver and wrap it as Promise-Objects",
+  "author": "Lars Decker",
+  "main": "./src/index",
+  "types": "./src/main.d.ts",
+  "keywords": [
+    "mongodb",
+    "gridfs",
+    "native-promise",
+    "es6",
+    "typescript"
+  ],
+  "version": "1.0.0",
+  "devDependencies": {
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {
+    "tslint": "^5.9.1",
+    "@types/node": "^9.3.0",
+    "@types/mongodb": "^3.0.1",
+    "es6-promise": "^4.2.2",
+    "mongodb": "^3.0.1"
+  }
+}
