@@ -1,7 +1,7 @@
-import * as fs from "fs";
-import {Promise} from "es6-promise";
-import {GridFSBucket, GridFSBucketReadStream, MongoClient, MongoClientOptions} from "mongodb";
 import {ObjectID} from "bson";
+import {Promise} from "es6-promise";
+import * as fs from "fs";
+import {GridFSBucket, GridFSBucketReadStream, MongoClient, MongoClientOptions} from "mongodb";
 
 export interface IGridFSObject {
     _id: ObjectID;
@@ -28,7 +28,11 @@ export class GridFSPromise {
      * @param {string} basePath
      * @param {string} bucketName
      */
-    constructor(mongoUrl: string, databaseName: string, mongoOptions: MongoClientOptions, basePath?: string, bucketName?: string) {
+    constructor(mongoUrl: string,
+                databaseName: string,
+                mongoOptions: MongoClientOptions,
+                basePath?: string,
+                bucketName?: string) {
 
         this.databaseName = databaseName;
         this.connectionUrl = mongoUrl;
@@ -51,10 +55,10 @@ export class GridFSPromise {
 
         return new Promise((resolve, reject) => {
 
-            let gridSave = MongoClient.connect(this.connectionUrl);
+            const gridSave = MongoClient.connect(this.connectionUrl);
             gridSave.then((client) => {
-                let connection = client.db(this.databaseName);
-                let bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
+                const connection = client.db(this.databaseName);
+                const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
                 bucket.openDownloadStream(new ObjectID(id))
                     .once("error", (error) => {
@@ -80,10 +84,10 @@ export class GridFSPromise {
     public getFileStream(id: string): Promise<GridFSBucketReadStream> {
 
         return new Promise<GridFSBucketReadStream>((resolve, reject) => {
-            let gridSave = MongoClient.connect(this.connectionUrl, this.mongoClientOptions);
+            const gridSave = MongoClient.connect(this.connectionUrl, this.mongoClientOptions);
             return gridSave.then((client) => {
-                let connection = client.db(this.databaseName);
-                let bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
+                const connection = client.db(this.databaseName);
+                const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
                 bucket.find({_id: new ObjectID(id)}).toArray().then((result) => {
                     if (result.length > 0) {
@@ -104,10 +108,10 @@ export class GridFSPromise {
     public getObject(id: string) {
 
         return new Promise(((resolve, reject) => {
-            let gridSave = MongoClient.connect(this.connectionUrl, this.mongoClientOptions);
+            const gridSave = MongoClient.connect(this.connectionUrl, this.mongoClientOptions);
             gridSave.then((client) => {
-                let connection = client.db(this.databaseName);
-                let bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
+                const connection = client.db(this.databaseName);
+                const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
                 bucket.find({_id: new ObjectID(id)}).toArray().then((result) => {
                     if (result.length > 0) {

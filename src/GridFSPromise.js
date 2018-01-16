@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var fs = require("fs");
-var es6_promise_1 = require("es6-promise");
-var mongodb_1 = require("mongodb");
 var bson_1 = require("bson");
+var es6_promise_1 = require("es6-promise");
+var fs = require("fs");
+var mongodb_1 = require("mongodb");
 var GridFSPromise = /** @class */ (function () {
     /**
      *
@@ -96,3 +96,4 @@ var GridFSPromise = /** @class */ (function () {
     return GridFSPromise;
 }());
 exports.GridFSPromise = GridFSPromise;
+//# sourceMappingURL=GridFSPromise.js.map
