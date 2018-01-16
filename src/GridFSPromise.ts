@@ -128,6 +128,58 @@ export class GridFSPromise {
     }
 
     /**
+     * Upload a file directly from a fs Path
+     * @param {string} uploadFilePath
+     * @param {string} targetFileName
+     * @param {string} type
+     * @param {object} meta
+     * @return {Promise<IGridFSObject>}
+     */
+    public uploadFile(uploadFilePath: string,
+                      targetFileName: string,
+                      type: string,
+                      meta: object): Promise<IGridFSObject> {
+
+        return new Promise((resolve, reject) => {
+
+            if (!fs.existsSync(uploadFilePath)) {
+                reject(new Error("File not found"));
+            }
+
+            this.connectDB().then((client) => {
+                const connection = client.db(this.databaseName);
+                const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
+
+                fs.createReadStream(uploadFilePath)
+                    .pipe(bucket.openUploadStream(targetFileName, {
+                        contentType: type,
+                        metadata: meta,
+                    }))
+                    .on("error", (err) => {
+
+                        if (fs.existsSync(uploadFilePath)) {
+                            fs.unlinkSync(uploadFilePath);
+                        }
+
+                        reject(err);
+
+                    }).on("finish", (item) => {
+
+                        if (fs.existsSync(uploadFilePath)) {
+                            fs.unlinkSync(uploadFilePath);
+                        }
+
+                        resolve(item);
+                });
+
+            }).catch((err) => {
+                reject(err);
+            });
+
+        });
+    }
+
+    /**
      *
      * @return {PromiseLike<MongoClient> | Promise<MongoClient> | Thenable<MongoClient>}
      */
