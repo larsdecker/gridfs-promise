@@ -21,7 +21,7 @@ export class GridFSPromise {
     private bucketName: string;
 
     /**
-     *
+     * Constructor
      * @param {string} mongoUrl
      * @param {string} databaseName
      * @param {MongoClientOptions} mongoOptions
@@ -45,18 +45,42 @@ export class GridFSPromise {
     }
 
     /**
+     * Returns a stream of a file from the GridFS.
+     * @param {string} id
+     * @return {Promise<GridFSBucketReadStream>}
+     */
+    public getFileStream(id: string): Promise<GridFSBucketReadStream> {
+
+        return new Promise<GridFSBucketReadStream>((resolve, reject) => {
+            this.connectDB().then((client) => {
+                const connection = client.db(this.databaseName);
+                const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
+
+                bucket.find({_id: new ObjectID(id)}).toArray().then((result) => {
+                    if (result.length > 0) {
+                        resolve(bucket.openDownloadStream(new ObjectID(id)));
+                    } else {
+                        reject();
+                    }
+                });
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    }
+
+    /**
      * Save the File from the GridFs to the filesystem and get the Path back
      * @param {string} id
      * @param {string} fileName
      * @param filePath
      * @return {Promise<string>}
      */
-    public getFile(id: string, fileName: string, filePath: string = "/tmpArchive/archive/"): Promise<string> {
+    public getFile(id: string, fileName: string, filePath: string = __dirname): Promise<string> {
 
         return new Promise((resolve, reject) => {
 
-            const gridSave = MongoClient.connect(this.connectionUrl);
-            gridSave.then((client) => {
+            this.connectDB().then((client) => {
                 const connection = client.db(this.databaseName);
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
@@ -77,30 +101,6 @@ export class GridFSPromise {
     }
 
     /**
-     * Returns a stream of a file from the GridFS.
-     * @param {string} id
-     * @return {Promise<GridFSBucketReadStream>}
-     */
-    public getFileStream(id: string): Promise<GridFSBucketReadStream> {
-
-        return new Promise<GridFSBucketReadStream>((resolve, reject) => {
-            const gridSave = MongoClient.connect(this.connectionUrl, this.mongoClientOptions);
-            return gridSave.then((client) => {
-                const connection = client.db(this.databaseName);
-                const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
-
-                bucket.find({_id: new ObjectID(id)}).toArray().then((result) => {
-                    if (result.length > 0) {
-                        resolve(bucket.openDownloadStream(new ObjectID(id)));
-                    } else {
-                        reject();
-                    }
-                });
-            });
-        });
-    }
-
-    /**
      * Get a single Object
      * @param {string} id
      * @return {Promise<IGridFSObject>}
@@ -108,8 +108,7 @@ export class GridFSPromise {
     public getObject(id: string) {
 
         return new Promise(((resolve, reject) => {
-            const gridSave = MongoClient.connect(this.connectionUrl, this.mongoClientOptions);
-            gridSave.then((client) => {
+            this.connectDB().then((client) => {
                 const connection = client.db(this.databaseName);
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
@@ -121,9 +120,19 @@ export class GridFSPromise {
                     }
                 });
 
+            }).catch((err) => {
+                reject(err);
             });
         }));
 
+    }
+
+    /**
+     *
+     * @return {PromiseLike<MongoClient> | Promise<MongoClient> | Thenable<MongoClient>}
+     */
+    private connectDB() {
+          return MongoClient.connect(this.connectionUrl, this.mongoClientOptions);
     }
 
 }

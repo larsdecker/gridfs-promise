@@ -6,7 +6,7 @@ var fs = require("fs");
 var mongodb_1 = require("mongodb");
 var GridFSPromise = /** @class */ (function () {
     /**
-     *
+     * Constructor
      * @param {string} mongoUrl
      * @param {string} databaseName
      * @param {MongoClientOptions} mongoOptions
@@ -21,6 +21,30 @@ var GridFSPromise = /** @class */ (function () {
         this.bucketName = bucketName || "fs";
     }
     /**
+     * Returns a stream of a file from the GridFS.
+     * @param {string} id
+     * @return {Promise<GridFSBucketReadStream>}
+     */
+    GridFSPromise.prototype.getFileStream = function (id) {
+        var _this = this;
+        return new es6_promise_1.Promise(function (resolve, reject) {
+            _this.connectDB().then(function (client) {
+                var connection = client.db(_this.databaseName);
+                var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
+                bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) {
+                    if (result.length > 0) {
+                        resolve(bucket.openDownloadStream(new bson_1.ObjectID(id)));
+                    }
+                    else {
+                        reject();
+                    }
+                });
+            }).catch(function (err) {
+                reject(err);
+            });
+        });
+    };
+    /**
      * Save the File from the GridFs to the filesystem and get the Path back
      * @param {string} id
      * @param {string} fileName
@@ -29,10 +53,9 @@ var GridFSPromise = /** @class */ (function () {
      */
     GridFSPromise.prototype.getFile = function (id, fileName, filePath) {
         var _this = this;
-        if (filePath === void 0) { filePath = "/tmpArchive/archive/"; }
+        if (filePath === void 0) { filePath = __dirname; }
         return new es6_promise_1.Promise(function (resolve, reject) {
-            var gridSave = mongodb_1.MongoClient.connect(_this.connectionUrl);
-            gridSave.then(function (client) {
+            _this.connectDB().then(function (client) {
                 var connection = client.db(_this.databaseName);
                 var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
                 bucket.openDownloadStream(new bson_1.ObjectID(id))
@@ -48,29 +71,6 @@ var GridFSPromise = /** @class */ (function () {
         });
     };
     /**
-     * Returns a stream of a file from the GridFS.
-     * @param {string} id
-     * @return {Promise<GridFSBucketReadStream>}
-     */
-    GridFSPromise.prototype.getFileStream = function (id) {
-        var _this = this;
-        return new es6_promise_1.Promise(function (resolve, reject) {
-            var gridSave = mongodb_1.MongoClient.connect(_this.connectionUrl, _this.mongoClientOptions);
-            return gridSave.then(function (client) {
-                var connection = client.db(_this.databaseName);
-                var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
-                bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) {
-                    if (result.length > 0) {
-                        resolve(bucket.openDownloadStream(new bson_1.ObjectID(id)));
-                    }
-                    else {
-                        reject();
-                    }
-                });
-            });
-        });
-    };
-    /**
      * Get a single Object
      * @param {string} id
      * @return {Promise<IGridFSObject>}
@@ -78,8 +78,7 @@ var GridFSPromise = /** @class */ (function () {
     GridFSPromise.prototype.getObject = function (id) {
         var _this = this;
         return new es6_promise_1.Promise((function (resolve, reject) {
-            var gridSave = mongodb_1.MongoClient.connect(_this.connectionUrl, _this.mongoClientOptions);
-            gridSave.then(function (client) {
+            _this.connectDB().then(function (client) {
                 var connection = client.db(_this.databaseName);
                 var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
                 bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) {
@@ -90,8 +89,17 @@ var GridFSPromise = /** @class */ (function () {
                         reject();
                     }
                 });
+            }).catch(function (err) {
+                reject(err);
             });
         }));
+    };
+    /**
+     *
+     * @return {PromiseLike<MongoClient> | Promise<MongoClient> | Thenable<MongoClient>}
+     */
+    GridFSPromise.prototype.connectDB = function () {
+        return mongodb_1.MongoClient.connect(this.connectionUrl, this.mongoClientOptions);
     };
     return GridFSPromise;
 }());
