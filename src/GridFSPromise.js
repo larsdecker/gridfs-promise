@@ -86,7 +86,7 @@ var GridFSPromise = /** @class */ (function () {
                         resolve(result[0]);
                     }
                     else {
-                        reject();
+                        reject(new Error("No Object found"));
                     }
                 });
             }).catch(function (err) {
@@ -127,6 +127,28 @@ var GridFSPromise = /** @class */ (function () {
                     }
                     resolve(item);
                 });
+            }).catch(function (err) {
+                reject(err);
+            });
+        });
+    };
+    /**
+     * Delete an File from the GridFS
+     * @param {string} id
+     * @return {Promise<boolean>}
+     */
+    GridFSPromise.prototype.delete = function (id) {
+        var _this = this;
+        return new es6_promise_1.Promise(function (resolve, reject) {
+            _this.connectDB().then(function (client) {
+                var connection = client.db(_this.databaseName);
+                var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
+                bucket.delete(new bson_1.ObjectID(id), (function (err) {
+                    if (err) {
+                        reject(err);
+                    }
+                    resolve(true);
+                }));
             }).catch(function (err) {
                 reject(err);
             });

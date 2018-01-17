@@ -116,7 +116,7 @@ export class GridFSPromise {
                     if (result.length > 0) {
                         resolve(result[0]);
                     } else {
-                        reject();
+                        reject(new Error("No Object found"));
                     }
                 });
 
@@ -177,6 +177,30 @@ export class GridFSPromise {
             });
 
         });
+    }
+
+    /**
+     * Delete an File from the GridFS
+     * @param {string} id
+     * @return {Promise<boolean>}
+     */
+    public delete(id: string): Promise<boolean> {
+
+        return new Promise<boolean>((resolve, reject) => {
+            this.connectDB().then((client) => {
+                const connection = client.db(this.databaseName);
+                const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
+
+                bucket.delete(new ObjectID(id), ((err) => {
+                    if (err) { reject(err); }
+                    resolve(true);
+                }));
+
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+
     }
 
     /**
