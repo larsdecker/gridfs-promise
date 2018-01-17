@@ -1,5 +1,5 @@
 {
-  "name": "larsdecker/gridfs-promise",
+  "name": "gridfs-promise",
   "description": "Uses the native GridFSBucket-Api from the new MongoDB NodeJS Driver and wrap it as Promise-Objects",
   "author": "Lars Decker",
   "main": "./src/index",

@@ -105,16 +105,16 @@ export class GridFSPromise {
      * @param {string} id
      * @return {Promise<IGridFSObject>}
      */
-    public getObject(id: string) {
+    public getObject(id: string): Promise<IGridFSObject> {
 
         return new Promise(((resolve, reject) => {
             this.connectDB().then((client) => {
                 const connection = client.db(this.databaseName);
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
-                bucket.find({_id: new ObjectID(id)}).toArray().then((result) => {
+                bucket.find({_id: new ObjectID(id)}).toArray().then((result: IGridFSObject[]) => {
                     if (result.length > 0) {
-                        resolve(result);
+                        resolve(result[0]);
                     } else {
                         reject();
                     }

@@ -83,7 +83,7 @@ var GridFSPromise = /** @class */ (function () {
                 var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
                 bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) {
                     if (result.length > 0) {
-                        resolve(result);
+                        resolve(result[0]);
                     }
                     else {
                         reject();
