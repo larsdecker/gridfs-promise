@@ -1,8 +1,17 @@
+import {ObjectID} from "bson";
 import {Promise} from "es6-promise";
 import {GridFSBucketReadStream, MongoClientOptions} from "mongodb";
 import {IGridFSObject} from "./GridFSPromise";
 
 declare module "GridFSPromise" {
+
+    export interface IGridFSObject {
+        _id: ObjectID;
+        fileName: string;
+        contentType: string;
+        meta: object;
+        fileSize: number;
+    }
 
     export class GridFsPromise {
 
