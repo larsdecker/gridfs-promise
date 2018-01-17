@@ -11,7 +11,7 @@ That is simple
 
 ## Usage
 
-```
+```js
 const mongoOptions: MongoClientOptions = {
   autoReconnect: true,
 };
@@ -33,7 +33,7 @@ gridFS.getObject("59e085f272882d728e2fa4c2").then((item) => {
 By this method you will simple get the meta-object from the MongoDB as a Promise-Object.
 If nothing found at the Database, then it will reject and the catch-block will be executed.
 
-```
+```js
 gridFS.getObject("59e085f272882d728e2fa4c2").then((item) => {
     console.log(item);
 }).catch((err) => {
@@ -46,7 +46,7 @@ gridFS.getObject("59e085f272882d728e2fa4c2").then((item) => {
 You will get the file simple written to the filesystem directly from the Database.
 If nothing found at the Database, then it will reject and the catch-block will be executed.
 
-```
+```js
 gridFS.getFile("59e085f272882d728e2fa4c2", "test.gif").then((item) => {
     console.log(item);
 }).catch((err) => {
@@ -62,7 +62,7 @@ If nothing found at the Database, then it will reject and the catch-block will b
 This method is very useful, to stream the content directly to the user.
 
 For example with express:
-```
+```js
 return gridFs.getFileStream(req.params.id).then((item) => {
                 item
                 .once("error", () => {
