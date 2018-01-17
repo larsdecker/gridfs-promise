@@ -163,7 +163,7 @@ export class GridFSPromise {
 
                         reject(err);
 
-                    }).on("finish", (item) => {
+                    }).on("finish", (item: IGridFSObject) => {
 
                         if (fs.existsSync(uploadFilePath)) {
                             fs.unlinkSync(uploadFilePath);

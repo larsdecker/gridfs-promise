@@ -1,1 +1,1 @@
-require("GridFSPromise");
+import {GridFSPromise} from "./GridFSPromise";
