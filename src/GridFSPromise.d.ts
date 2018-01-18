@@ -19,10 +19,10 @@ export declare class GridFSPromise {
      * @param {string} mongoUrl
      * @param {string} databaseName
      * @param {MongoClientOptions} mongoOptions
-     * @param {string} basePath
      * @param {string} bucketName
+     * @param {string} basePath
      */
-    constructor(mongoUrl: string, databaseName: string, mongoOptions: MongoClientOptions, basePath?: string, bucketName?: string);
+    constructor(mongoUrl: string, databaseName: string, mongoOptions: MongoClientOptions, bucketName?: string, basePath?: string);
     /**
      * Returns a stream of a file from the GridFS.
      * @param {string} id

@@ -25,22 +25,22 @@ export class GridFSPromise {
      * @param {string} mongoUrl
      * @param {string} databaseName
      * @param {MongoClientOptions} mongoOptions
-     * @param {string} basePath
      * @param {string} bucketName
+     * @param {string} basePath
      */
     constructor(mongoUrl: string,
                 databaseName: string,
                 mongoOptions: MongoClientOptions,
-                basePath?: string,
-                bucketName?: string) {
+                bucketName?: string,
+                basePath?: string) {
 
         this.databaseName = databaseName;
         this.connectionUrl = mongoUrl;
         this.mongoClientOptions = mongoOptions;
 
-        this.basePath = basePath || __dirname;
-
         this.bucketName =  bucketName || "fs";
+
+        this.basePath = basePath || __dirname;
 
     }
 

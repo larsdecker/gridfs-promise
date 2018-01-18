@@ -10,15 +10,15 @@ var GridFSPromise = /** @class */ (function () {
      * @param {string} mongoUrl
      * @param {string} databaseName
      * @param {MongoClientOptions} mongoOptions
-     * @param {string} basePath
      * @param {string} bucketName
+     * @param {string} basePath
      */
-    function GridFSPromise(mongoUrl, databaseName, mongoOptions, basePath, bucketName) {
+    function GridFSPromise(mongoUrl, databaseName, mongoOptions, bucketName, basePath) {
         this.databaseName = databaseName;
         this.connectionUrl = mongoUrl;
         this.mongoClientOptions = mongoOptions;
-        this.basePath = basePath || __dirname;
         this.bucketName = bucketName || "fs";
+        this.basePath = basePath || __dirname;
     }
     /**
      * Returns a stream of a file from the GridFS.
