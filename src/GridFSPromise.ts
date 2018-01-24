@@ -40,7 +40,7 @@ export class GridFSPromise {
 
         this.bucketName =  bucketName || "fs";
 
-        this.basePath = basePath || __dirname;
+        this.basePath = basePath || `${__dirname}/../cache`;
 
     }
 
@@ -73,10 +73,10 @@ export class GridFSPromise {
      * Save the File from the GridFs to the filesystem and get the Path back
      * @param {string} id
      * @param {string} fileName
-     * @param filePath
+     * @param {string} filePath
      * @return {Promise<string>}
      */
-    public getFile(id: string, fileName: string, filePath: string = __dirname): Promise<string> {
+    public getFile(id: string, fileName?: string, filePath?: string): Promise<string> {
 
         return new Promise((resolve, reject) => {
 
@@ -90,13 +90,29 @@ export class GridFSPromise {
                         throw new Error("Object not found");
                     }
 
+                    if (!fileName) {
+                        fileName = result[0].filename;
+                    }
+
+                    if (!filePath) {
+                        filePath = "";
+                    }
+
+                    if (this.basePath.charAt(this.basePath.length - 1) !== "/") {
+                        filePath += "/";
+                    }
+
+                    if (!fs.existsSync(`${this.basePath}${filePath}`)) {
+                        throw new Error("Path not found");
+                    }
+
                     bucket.openDownloadStream(new ObjectID(id))
                         .once("error", (error) => {
                             reject(error);
-                        }).once("finish", () => {
-                        resolve(this.basePath.concat(`${filePath}${fileName}`));
-                    })
-                        .pipe(fs.createWriteStream(this.basePath.concat(`${filePath}${fileName}`)));
+                        }).once("end", () => {
+                            resolve(`${this.basePath}${filePath}${fileName}`);
+                        })
+                        .pipe(fs.createWriteStream(`${this.basePath}${filePath}${fileName}`));
                 });
 
             }).catch((err) => {

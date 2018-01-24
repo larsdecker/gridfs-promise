@@ -33,10 +33,10 @@ export declare class GridFSPromise {
      * Save the File from the GridFs to the filesystem and get the Path back
      * @param {string} id
      * @param {string} fileName
-     * @param filePath
+     * @param {string} filePath
      * @return {Promise<string>}
      */
-    getFile(id: string, fileName: string, filePath?: string): Promise<string>;
+    getFile(id: string, fileName?: string, filePath?: string): Promise<string>;
     /**
      * Get a single Object
      * @param {string} id

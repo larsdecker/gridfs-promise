@@ -18,7 +18,7 @@ var GridFSPromise = /** @class */ (function () {
         this.connectionUrl = mongoUrl;
         this.mongoClientOptions = mongoOptions;
         this.bucketName = bucketName || "fs";
-        this.basePath = basePath || __dirname;
+        this.basePath = basePath || __dirname + "/../cache";
     }
     /**
      * Returns a stream of a file from the GridFS.
@@ -48,12 +48,11 @@ var GridFSPromise = /** @class */ (function () {
      * Save the File from the GridFs to the filesystem and get the Path back
      * @param {string} id
      * @param {string} fileName
-     * @param filePath
+     * @param {string} filePath
      * @return {Promise<string>}
      */
     GridFSPromise.prototype.getFile = function (id, fileName, filePath) {
         var _this = this;
-        if (filePath === void 0) { filePath = __dirname; }
         return new es6_promise_1.Promise(function (resolve, reject) {
             _this.connectDB().then(function (client) {
                 var connection = client.db(_this.databaseName);
@@ -62,13 +61,25 @@ var GridFSPromise = /** @class */ (function () {
                     if (!result) {
                         throw new Error("Object not found");
                     }
+                    if (!fileName) {
+                        fileName = result[0].filename;
+                    }
+                    if (!filePath) {
+                        filePath = "";
+                    }
+                    if (_this.basePath.charAt(_this.basePath.length - 1) !== "/") {
+                        filePath += "/";
+                    }
+                    if (!fs.existsSync("" + _this.basePath + filePath)) {
+                        throw new Error("Path not found");
+                    }
                     bucket.openDownloadStream(new bson_1.ObjectID(id))
                         .once("error", function (error) {
                         reject(error);
-                    }).once("finish", function () {
-                        resolve(_this.basePath.concat("" + filePath + fileName));
+                    }).once("end", function () {
+                        resolve("" + _this.basePath + filePath + fileName);
                     })
-                        .pipe(fs.createWriteStream(_this.basePath.concat("" + filePath + fileName)));
+                        .pipe(fs.createWriteStream("" + _this.basePath + filePath + fileName));
                 });
             }).catch(function (err) {
                 reject(err);

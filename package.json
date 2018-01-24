@@ -8,10 +8,12 @@
     "mongodb",
     "gridfs",
     "native-promise",
+    "gridFSBucket",
+    "nodejs",
     "es6",
     "typescript"
   ],
-  "version": "2.1.0",
+  "version": "3.0.0",
   "devDependencies": {
     "@types/chai": "^4.1.1",
     "@types/mocha": "^2.2.46",
