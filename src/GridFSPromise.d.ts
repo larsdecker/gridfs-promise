@@ -3,7 +3,7 @@ import { Promise } from "es6-promise";
 import { GridFSBucketReadStream, MongoClientOptions } from "mongodb";
 export interface IGridFSObject {
     _id: ObjectID;
-    fileName: string;
+    filename: string;
     contentType: string;
     meta: object;
     fileSize: number;

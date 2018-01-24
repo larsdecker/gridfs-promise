@@ -58,13 +58,18 @@ var GridFSPromise = /** @class */ (function () {
             _this.connectDB().then(function (client) {
                 var connection = client.db(_this.databaseName);
                 var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
-                bucket.openDownloadStream(new bson_1.ObjectID(id))
-                    .once("error", function (error) {
-                    reject(error);
-                }).once("finish", function () {
-                    resolve(_this.basePath.concat("" + filePath + fileName));
-                })
-                    .pipe(fs.createWriteStream(_this.basePath.concat("" + filePath + fileName)));
+                return bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) {
+                    if (!result) {
+                        throw new Error("Object not found");
+                    }
+                    bucket.openDownloadStream(new bson_1.ObjectID(id))
+                        .once("error", function (error) {
+                        reject(error);
+                    }).once("finish", function () {
+                        resolve(_this.basePath.concat("" + filePath + fileName));
+                    })
+                        .pipe(fs.createWriteStream(_this.basePath.concat("" + filePath + fileName)));
+                });
             }).catch(function (err) {
                 reject(err);
             });

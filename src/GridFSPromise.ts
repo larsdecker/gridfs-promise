@@ -5,7 +5,7 @@ import {GridFSBucket, GridFSBucketReadStream, MongoClient, MongoClientOptions} f
 
 export interface IGridFSObject {
     _id: ObjectID;
-    fileName: string;
+    filename: string;
     contentType: string;
     meta: object;
     fileSize: number;
@@ -84,13 +84,20 @@ export class GridFSPromise {
                 const connection = client.db(this.databaseName);
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
-                bucket.openDownloadStream(new ObjectID(id))
-                    .once("error", (error) => {
-                        reject(error);
-                    }).once("finish", () => {
+                return bucket.find({_id: new ObjectID(id)}).toArray().then((result) => {
+
+                    if (!result) {
+                        throw new Error("Object not found");
+                    }
+
+                    bucket.openDownloadStream(new ObjectID(id))
+                        .once("error", (error) => {
+                            reject(error);
+                        }).once("finish", () => {
                         resolve(this.basePath.concat(`${filePath}${fileName}`));
                     })
-                    .pipe(fs.createWriteStream(this.basePath.concat(`${filePath}${fileName}`)));
+                        .pipe(fs.createWriteStream(this.basePath.concat(`${filePath}${fileName}`)));
+                });
 
             }).catch((err) => {
                 reject(err);
