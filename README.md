@@ -7,7 +7,7 @@ The old GridStore-API is now deprecated (http://mongodb.github.io/node-mongodb-n
 
 That is simple
 
-`npm install gridfs-stream`
+`npm install gridfs-promise`
 
 ## Usage
 
