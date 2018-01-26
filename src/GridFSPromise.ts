@@ -156,12 +156,14 @@ export class GridFSPromise {
      * @param {string} targetFileName
      * @param {string} type
      * @param {object} meta
+     * @param {boolean} deleteFile
      * @return {Promise<IGridFSObject>}
      */
     public uploadFile(uploadFilePath: string,
                       targetFileName: string,
                       type: string,
-                      meta: object): Promise<IGridFSObject> {
+                      meta: object,
+                      deleteFile: boolean = true): Promise<IGridFSObject> {
 
         return new Promise((resolve, reject) => {
 
@@ -180,7 +182,7 @@ export class GridFSPromise {
                     }))
                     .on("error", (err) => {
 
-                        if (fs.existsSync(uploadFilePath)) {
+                        if (fs.existsSync(uploadFilePath) && deleteFile === true) {
                             fs.unlinkSync(uploadFilePath);
                         }
 
@@ -188,7 +190,7 @@ export class GridFSPromise {
 
                     }).on("finish", (item: IGridFSObject) => {
 
-                        if (fs.existsSync(uploadFilePath)) {
+                        if (fs.existsSync(uploadFilePath) && deleteFile === true) {
                             fs.unlinkSync(uploadFilePath);
                         }
 

@@ -116,10 +116,12 @@ var GridFSPromise = /** @class */ (function () {
      * @param {string} targetFileName
      * @param {string} type
      * @param {object} meta
+     * @param {boolean} deleteFile
      * @return {Promise<IGridFSObject>}
      */
-    GridFSPromise.prototype.uploadFile = function (uploadFilePath, targetFileName, type, meta) {
+    GridFSPromise.prototype.uploadFile = function (uploadFilePath, targetFileName, type, meta, deleteFile) {
         var _this = this;
+        if (deleteFile === void 0) { deleteFile = true; }
         return new es6_promise_1.Promise(function (resolve, reject) {
             if (!fs.existsSync(uploadFilePath)) {
                 reject(new Error("File not found"));
@@ -133,12 +135,12 @@ var GridFSPromise = /** @class */ (function () {
                     metadata: meta,
                 }))
                     .on("error", function (err) {
-                    if (fs.existsSync(uploadFilePath)) {
+                    if (fs.existsSync(uploadFilePath) && deleteFile === true) {
                         fs.unlinkSync(uploadFilePath);
                     }
                     reject(err);
                 }).on("finish", function (item) {
-                    if (fs.existsSync(uploadFilePath)) {
+                    if (fs.existsSync(uploadFilePath) && deleteFile === true) {
                         fs.unlinkSync(uploadFilePath);
                     }
                     resolve(item);

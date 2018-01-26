@@ -49,9 +49,10 @@ export declare class GridFSPromise {
      * @param {string} targetFileName
      * @param {string} type
      * @param {object} meta
+     * @param {boolean} deleteFile
      * @return {Promise<IGridFSObject>}
      */
-    uploadFile(uploadFilePath: string, targetFileName: string, type: string, meta: object): Promise<IGridFSObject>;
+    uploadFile(uploadFilePath: string, targetFileName: string, type: string, meta: object, deleteFile?: boolean): Promise<IGridFSObject>;
     /**
      * Delete an File from the GridFS
      * @param {string} id

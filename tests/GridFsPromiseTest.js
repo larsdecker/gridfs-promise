@@ -54,4 +54,15 @@ describe("GetObject", function () {
         });
     });
 });
+describe("UploadObject", function () {
+    it("should upload FileObject", function () {
+        var gridFSPromise = new GridFSPromise_1.GridFSPromise("mongodb://localhost:27017", "tikki", {}, "attachments", __dirname);
+        return gridFSPromise.uploadFile(__dirname + "/5MB.zip", "test.zip", "application/zip", {}).then(function (result) {
+            assert.equal(result.filename, "test.zip");
+            assert.equal(result.contentType, "application/zip");
+        }).catch(function (error) {
+            assert_1.fail(error);
+        });
+    });
+});
 //# sourceMappingURL=GridFsPromiseTest.js.map

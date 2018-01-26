@@ -80,3 +80,21 @@ describe("GetObject", () => {
     });
 
 });
+
+describe("UploadObject", () => {
+
+    it("should upload FileObject", () => {
+        const gridFSPromise = new GridFSPromise("mongodb://localhost:27017",
+            "tikki", {},
+            "attachments", __dirname);
+
+        return gridFSPromise.uploadFile(`${__dirname}/5MB.zip`, "test.zip", "application/zip", {}).then((result) => {
+            assert.equal(result.filename , "test.zip");
+            assert.equal(result.contentType , "application/zip");
+        }).catch((error) => {
+            fail(error);
+        });
+
+    });
+
+});
