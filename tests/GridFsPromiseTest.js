@@ -53,6 +53,15 @@ describe("GetObject", function () {
             assert_1.fail(error);
         });
     });
+    it("should not get FileObject", function () {
+        var gridFSPromise = new GridFSPromise_1.GridFSPromise("mongodb://localhost:27017", "tikki", {}, "attachments", __dirname);
+        return gridFSPromise.getObject("5a2653f4b908cd7b40e385dY").then(function (result) {
+            assert.equal(result.filename, "203857-76.pdf");
+            assert.equal(result.contentType, "application/pdf");
+        }).catch(function (error) {
+            assert_1.fail(error);
+        });
+    });
 });
 describe("UploadObject", function () {
     it("should upload FileObject", function () {

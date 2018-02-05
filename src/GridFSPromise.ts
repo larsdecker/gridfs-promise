@@ -4,11 +4,14 @@ import * as fs from "fs";
 import {GridFSBucket, GridFSBucketReadStream, MongoClient, MongoClientOptions} from "mongodb";
 
 export interface IGridFSObject {
-    _id: ObjectID;
+    _id: string;
+    length: number;
+    chunkSize: number;
+    uploadDate: Date;
+    md5: string;
     filename: string;
     contentType: string;
-    meta: object;
-    fileSize: number;
+    metadata: object;
 }
 
 export class GridFSPromise {
