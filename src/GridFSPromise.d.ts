@@ -1,6 +1,5 @@
 import { ObjectID } from "bson";
-import { Promise } from "es6-promise";
-import { GridFSBucketReadStream, MongoClientOptions } from "mongodb";
+import { GridFSBucketReadStream, MongoClient, MongoClientOptions } from "mongodb";
 export interface IGridFSObject {
     _id: ObjectID;
     length: number;
@@ -16,6 +15,7 @@ export declare class GridFSPromise {
     private connectionUrl;
     private basePath;
     private mongoClientOptions;
+    private _CONNECTION;
     private bucketName;
     /**
      * Constructor
@@ -67,4 +67,5 @@ export declare class GridFSPromise {
      * @return {PromiseLike<MongoClient> | Promise<MongoClient> | Thenable<MongoClient>}
      */
     private connectDB();
+    readonly connection: MongoClient;
 }

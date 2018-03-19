@@ -1,5 +1,4 @@
 import {ObjectID} from "bson";
-import {Promise} from "es6-promise";
 import * as fs from "fs";
 import {GridFSBucket, GridFSBucketReadStream, MongoClient, MongoClientOptions} from "mongodb";
 
@@ -20,6 +19,8 @@ export class GridFSPromise {
     private connectionUrl: string;
     private basePath: string;
     private mongoClientOptions: MongoClientOptions;
+
+    private _CONNECTION: MongoClient;
 
     private bucketName: string;
 
@@ -235,8 +236,12 @@ export class GridFSPromise {
      *
      * @return {PromiseLike<MongoClient> | Promise<MongoClient> | Thenable<MongoClient>}
      */
-    private connectDB() {
-          return MongoClient.connect(this.connectionUrl, this.mongoClientOptions);
+    private async connectDB() {
+          return this._CONNECTION = await MongoClient.connect(this.connectionUrl, this.mongoClientOptions);
+    }
+
+    get connection(): MongoClient {
+        return this._CONNECTION;
     }
 
 }

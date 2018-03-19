@@ -84,7 +84,7 @@ describe("GetObject", () => {
             "tikki", {},
             "attachments", __dirname);
 
-        return gridFSPromise.getObject("5a2653f4b908cd7b40e385dY").then((result) => {
+        return gridFSPromise.getObject("5a2653f4b908cd7b40e385d3").then((result) => {
             assert.equal(result.filename , "203857-76.pdf");
             assert.equal(result.contentType , "application/pdf");
         }).catch((error) => {
