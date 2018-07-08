@@ -90,7 +90,7 @@ export class GridFSPromise {
 
                 return bucket.find({_id: new ObjectID(id)}).toArray().then((result) => {
 
-                    if (!result) {
+                    if (!result || result.length === 0) {
                         throw new Error("Object not found");
                     }
 

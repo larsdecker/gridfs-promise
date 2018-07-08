@@ -92,7 +92,7 @@ var GridFSPromise = /** @class */ (function () {
                 var connection = client.db(_this.databaseName);
                 var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
                 return bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) {
-                    if (!result) {
+                    if (!result || result.length === 0) {
                         throw new Error("Object not found");
                     }
                     if (!fileName) {
