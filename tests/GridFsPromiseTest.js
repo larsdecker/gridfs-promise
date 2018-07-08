@@ -7,7 +7,9 @@ require("mocha");
 var GridFSPromise_1 = require("../src/GridFSPromise");
 describe("GetFile", function () {
     it("should get FilePath", function () {
-        var gridFSPromise = new GridFSPromise_1.GridFSPromise("mongodb://localhost:27017", "tikki", {}, "attachments", __dirname + "/../cache");
+        var gridFSPromise = new GridFSPromise_1.GridFSPromise("mongodb://test:test1234@ds119129.mlab.com:19129/my-gridfs-test", "my-gridfs-test", {
+            autoReconnect: true,
+        }, "attachments", __dirname + "/../cache");
         return gridFSPromise.getFile("5a2653f4b908cd7b40e385d3").then(function (result) {
             assert.equal(result, __dirname + "/../cache/203857-76.pdf");
         }).catch(function (error) {

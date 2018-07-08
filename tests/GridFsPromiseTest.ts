@@ -7,8 +7,10 @@ import {GridFSPromise} from "../src/GridFSPromise";
 describe("GetFile", () => {
 
     it("should get FilePath", () => {
-        const gridFSPromise = new GridFSPromise("mongodb://localhost:27017",
-                            "tikki", {},
+        const gridFSPromise = new GridFSPromise("mongodb://test:test1234@ds119129.mlab.com:19129/my-gridfs-test",
+                            "my-gridfs-test", {
+                                            autoReconnect: true,
+                                        },
                             "attachments", `${__dirname}/../cache`);
 
         return gridFSPromise.getFile("5a2653f4b908cd7b40e385d3").then((result) => {
