@@ -11,7 +11,10 @@
     "gridFSBucket",
     "nodejs",
     "es6",
-    "typescript"
+    "typescript",
+    "mongoose",
+    "mongo",
+    "async"
   ],
   "version": "4.0.0",
   "devDependencies": {
