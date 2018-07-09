@@ -4,6 +4,14 @@
   "author": "Lars Decker",
   "main": "./src/GridFSPromise",
   "types": "./src/GridFSPromise.d.ts",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/larsdecker/gridfs-promise.git"
+  },
+  "bugs": {
+    "url": "https://github.com/larsdecker/gridfs-promise/issues/new"
+  },
   "keywords": [
     "mongodb",
     "gridfs",
@@ -16,7 +24,7 @@
     "mongo",
     "async"
   ],
-  "version": "4.0.1",
+  "version": "4.0.2",
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/mocha": "^2.2.48",
@@ -25,12 +33,13 @@
     "chai": "^4.1.2",
     "mocha": "^5.2.0",
     "ts-node": "^7.0.0",
-    "typescript": "^2.9.2"
+    "typescript": "^2.9.2",
+    "tsd-jsdoc": "^2.0.0-beta.5",
+    "jsdoc": "^3.5.5",
+    "tslint": "^5.10.0"
   },
   "dependencies": {
     "es6-promise": "^4.2.2",
-    "mongodb": "^3.1.1",
-    "tsd-jsdoc": "^2.0.0-beta.5",
-    "tslint": "^5.10.0"
+    "mongodb": "^3.1.1"
   }
 }
