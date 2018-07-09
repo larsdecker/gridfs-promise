@@ -14,6 +14,7 @@ That is simple
 ```js
 const mongoOptions: MongoClientOptions = {
   autoReconnect: true,
+  useNewUrlParser: true
 };
 
 let gridFS = new GridFSPromise("test", "mongodb://localhost:27017/test", mongoOptions, __dirname, "attachments");
