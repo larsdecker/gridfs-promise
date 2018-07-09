@@ -12,11 +12,11 @@ export interface IGridFSObject {
 }
 export declare class GridFSPromise {
     private databaseName;
-    private connectionUrl;
+    private readonly connectionUrl;
+    private readonly mongoClientOptions;
     private basePath;
-    private mongoClientOptions;
-    private _CONNECTION;
     private bucketName;
+    private _CONNECTION;
     /**
      * Constructor
      * @param {string} mongoUrl
@@ -25,7 +25,9 @@ export declare class GridFSPromise {
      * @param {string} bucketName
      * @param {string} basePath
      */
-    constructor(mongoUrl: string, databaseName: string, mongoOptions: MongoClientOptions, bucketName?: string, basePath?: string);
+    constructor(databaseName: string, mongoUrl?: string | null, mongoOptions?: MongoClientOptions | null, bucketName?: string, basePath?: string);
+    CONNECTION: MongoClient;
+    readonly connection: MongoClient | null;
     /**
      * Returns a stream of a file from the GridFS.
      * @param {string} id
@@ -63,9 +65,7 @@ export declare class GridFSPromise {
      */
     delete(id: string): Promise<boolean>;
     /**
-     *
-     * @return {PromiseLike<MongoClient> | Promise<MongoClient> | Thenable<MongoClient>}
+     * Connect to the Database and return a promise Object
      */
-    private connectDB();
-    readonly connection: MongoClient;
+    private connectDB;
 }

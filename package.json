@@ -13,7 +13,7 @@
     "es6",
     "typescript"
   ],
-  "version": "3.4.0",
+  "version": "4.0.0",
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/mocha": "^2.2.48",

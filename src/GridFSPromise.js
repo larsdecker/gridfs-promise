@@ -14,8 +14,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -47,13 +47,32 @@ var GridFSPromise = /** @class */ (function () {
      * @param {string} bucketName
      * @param {string} basePath
      */
-    function GridFSPromise(mongoUrl, databaseName, mongoOptions, bucketName, basePath) {
+    function GridFSPromise(databaseName, mongoUrl, mongoOptions, bucketName, basePath) {
+        this._CONNECTION = null;
         this.databaseName = databaseName;
-        this.connectionUrl = mongoUrl;
-        this.mongoClientOptions = mongoOptions;
+        if (mongoUrl) {
+            this.connectionUrl = mongoUrl;
+        }
+        if (mongoOptions) {
+            this.mongoClientOptions = mongoOptions;
+        }
         this.bucketName = bucketName || "fs";
         this.basePath = basePath || __dirname + "/../cache";
     }
+    Object.defineProperty(GridFSPromise.prototype, "CONNECTION", {
+        set: function (value) {
+            this._CONNECTION = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GridFSPromise.prototype, "connection", {
+        get: function () {
+            return this._CONNECTION;
+        },
+        enumerable: true,
+        configurable: true
+    });
     /**
      * Returns a stream of a file from the GridFS.
      * @param {string} id
@@ -207,8 +226,7 @@ var GridFSPromise = /** @class */ (function () {
         });
     };
     /**
-     *
-     * @return {PromiseLike<MongoClient> | Promise<MongoClient> | Thenable<MongoClient>}
+     * Connect to the Database and return a promise Object
      */
     GridFSPromise.prototype.connectDB = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -216,6 +234,12 @@ var GridFSPromise = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
+                        if (this._CONNECTION) {
+                            return [2 /*return*/, this._CONNECTION];
+                        }
+                        if (!this.connectionUrl) {
+                            throw new Error("No Connection String given. Can´t connect to MongoDB.");
+                        }
                         _a = this;
                         return [4 /*yield*/, mongodb_1.MongoClient.connect(this.connectionUrl, this.mongoClientOptions)];
                     case 1: return [2 /*return*/, _a._CONNECTION = _b.sent()];
@@ -223,13 +247,6 @@ var GridFSPromise = /** @class */ (function () {
             });
         });
     };
-    Object.defineProperty(GridFSPromise.prototype, "connection", {
-        get: function () {
-            return this._CONNECTION;
-        },
-        enumerable: true,
-        configurable: true
-    });
     return GridFSPromise;
 }());
 exports.GridFSPromise = GridFSPromise;

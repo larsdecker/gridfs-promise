@@ -16,7 +16,7 @@ const mongoOptions: MongoClientOptions = {
   autoReconnect: true,
 };
 
-let gridFS = new GridFSPromise("mongodb://localhost:27017/test", "test", mongoOptions, __dirname, "attachments");
+let gridFS = new GridFSPromise("test", "mongodb://localhost:27017/test", mongoOptions, __dirname, "attachments");
 gridFS.getObject("59e085f272882d728e2fa4c2").then((item) => {
     console.log(item);
 }).catch((err) => {
@@ -70,3 +70,19 @@ return gridFs.getFileStream(req.params.id).then((item) => {
                 }).pipe(res);
         }).catch(() => res.status(500));
 ```
+
+
+## Mongoose & Other MongoClient Connections
+
+You can use you already existing MongoDB connection with the library. 
+
+```typescript
+
+const mongoDBConnection = await MongoClient.connect('mongodb://localhost:27017');
+
+const test = new GridFSPromise('test');
+test.CONNECTION = mongoDBConnection;
+
+
+```
+

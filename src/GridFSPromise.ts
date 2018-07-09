@@ -16,13 +16,14 @@ export interface IGridFSObject {
 export class GridFSPromise {
 
     private databaseName: string;
-    private connectionUrl: string;
+
+    private readonly connectionUrl: string|undefined;
+    private readonly mongoClientOptions: MongoClientOptions|undefined;
+
     private basePath: string;
-    private mongoClientOptions: MongoClientOptions;
-
-    private _CONNECTION: MongoClient;
-
     private bucketName: string;
+
+    private _CONNECTION: MongoClient | null = null;
 
     /**
      * Constructor
@@ -32,20 +33,34 @@ export class GridFSPromise {
      * @param {string} bucketName
      * @param {string} basePath
      */
-    constructor(mongoUrl: string,
-                databaseName: string,
-                mongoOptions: MongoClientOptions,
+    constructor(databaseName: string,
+                mongoUrl?: string|null,
+                mongoOptions?: MongoClientOptions|null,
                 bucketName?: string,
                 basePath?: string) {
 
         this.databaseName = databaseName;
-        this.connectionUrl = mongoUrl;
-        this.mongoClientOptions = mongoOptions;
 
-        this.bucketName =  bucketName || "fs";
+        if (mongoUrl) {
+            this.connectionUrl = mongoUrl;
+        }
+
+        if (mongoOptions) {
+            this.mongoClientOptions = mongoOptions;
+        }
+
+        this.bucketName = bucketName || "fs";
 
         this.basePath = basePath || `${__dirname}/../cache`;
 
+    }
+
+    set CONNECTION(value: MongoClient) {
+        this._CONNECTION = value;
+    }
+
+    get connection(): MongoClient | null {
+        return this._CONNECTION;
     }
 
     /**
@@ -114,8 +129,8 @@ export class GridFSPromise {
                         .once("error", (error) => {
                             reject(error);
                         }).once("end", () => {
-                            resolve(`${this.basePath}${filePath}${fileName}`);
-                        })
+                        resolve(`${this.basePath}${filePath}${fileName}`);
+                    })
                         .pipe(fs.createWriteStream(`${this.basePath}${filePath}${fileName}`));
                 });
 
@@ -194,11 +209,11 @@ export class GridFSPromise {
 
                     }).on("finish", (item: IGridFSObject) => {
 
-                        if (fs.existsSync(uploadFilePath) && deleteFile === true) {
-                            fs.unlinkSync(uploadFilePath);
-                        }
+                    if (fs.existsSync(uploadFilePath) && deleteFile === true) {
+                        fs.unlinkSync(uploadFilePath);
+                    }
 
-                        resolve(item);
+                    resolve(item);
                 });
 
             }).catch((err) => {
@@ -221,7 +236,9 @@ export class GridFSPromise {
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
                 bucket.delete(new ObjectID(id), ((err) => {
-                    if (err) { reject(err); }
+                    if (err) {
+                        reject(err);
+                    }
                     resolve(true);
                 }));
 
@@ -233,15 +250,19 @@ export class GridFSPromise {
     }
 
     /**
-     *
-     * @return {PromiseLike<MongoClient> | Promise<MongoClient> | Thenable<MongoClient>}
+     * Connect to the Database and return a promise Object
      */
-    private async connectDB() {
-          return this._CONNECTION = await MongoClient.connect(this.connectionUrl, this.mongoClientOptions);
-    }
+    private async connectDB(): Promise<MongoClient> {
 
-    get connection(): MongoClient {
-        return this._CONNECTION;
+        if (this._CONNECTION) {
+            return this._CONNECTION;
+        }
+
+        if (!this.connectionUrl) {
+            throw new Error("No Connection String given. Can´t connect to MongoDB.");
+        }
+
+        return this._CONNECTION = await MongoClient.connect(this.connectionUrl, this.mongoClientOptions);
     }
 
 }
