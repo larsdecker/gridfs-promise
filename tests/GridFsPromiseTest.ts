@@ -25,8 +25,8 @@ describe("GetFile", () => {
     // });
 
     it("should get FilePath without path", () => {
-        const gridFSPromise = new GridFSPromise("mongodb://localhost:27017",
-            "tikki", {},
+        const gridFSPromise = new GridFSPromise(
+            "tikki", "mongodb://localhost:27017", {},
             "attachments");
 
         return gridFSPromise.getFile("5a2653f4b908cd7b40e385d3").then((result) => {
@@ -38,7 +38,8 @@ describe("GetFile", () => {
     });
 
     it("should get FilePath with extra /", () => {
-        const gridFSPromise = new GridFSPromise("tikki",
+        const gridFSPromise = new GridFSPromise(
+            "tikki",
             "mongodb://localhost:27017",
             {useNewUrlParser: true},
             "attachments",
@@ -53,9 +54,10 @@ describe("GetFile", () => {
     });
 
     it("should return invalid Path", () => {
-        const gridFSPromise = new GridFSPromise("tikki",
+        const gridFSPromise = new GridFSPromise(
+            "tikki",
             "mongodb://localhost:27017",
-             {useNewUrlParser: true},
+            {useNewUrlParser: true},
             "attachments",
             __dirname + "/test");
 
@@ -86,7 +88,9 @@ describe("GetObject", () => {
     });
 
     it("should not get FileObject", () => {
-        const gridFSPromise = new GridFSPromise("tikki", "mongodb://localhost:27017",
+        const gridFSPromise = new GridFSPromise(
+            "tikki",
+            "mongodb://localhost:27017",
              {useNewUrlParser: true},
             "attachments", __dirname);
 
@@ -104,8 +108,10 @@ describe("GetObject", () => {
 describe("UploadObject", () => {
 
     it("should upload FileObject", () => {
-        const gridFSPromise = new GridFSPromise("tikki", "mongodb://localhost:27017",
-             {useNewUrlParser: true},
+        const gridFSPromise = new GridFSPromise(
+            "tikki",
+            "mongodb://localhost:27017",
+            {useNewUrlParser: true},
             "attachments", __dirname);
 
         return gridFSPromise.uploadFile(`${__dirname}/5MB.zip`, "test.zip", "application/zip", {}).then((result) => {
@@ -125,7 +131,11 @@ describe("ConnectionTest", () => {
 
         const connection = await MongoClient.connect("mongodb://localhost:27017", {useNewUrlParser: true});
 
-        const gridFSPromise = new GridFSPromise("tikki", null, null, "attachments");
+        const gridFSPromise = new GridFSPromise(
+            "tikki",
+            null,
+            null,
+            "attachments");
         gridFSPromise.CONNECTION = connection;
 
         return gridFSPromise.getObject("5b43ce3a58ebb3086dbf9334").then((result) => {

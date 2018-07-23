@@ -75,7 +75,10 @@ export class GridFSPromise {
                 const connection = client.db(this.databaseName);
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
-                bucket.find({_id: new ObjectID(id)}).toArray().then((result) => {
+                bucket.find({_id: new ObjectID(id)}).toArray().then(async (result) => {
+
+                    await client.close();
+
                     if (result.length > 0) {
                         resolve(bucket.openDownloadStream(new ObjectID(id)));
                     } else {
@@ -103,7 +106,7 @@ export class GridFSPromise {
                 const connection = client.db(this.databaseName);
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
-                return bucket.find({_id: new ObjectID(id)}).toArray().then((result) => {
+                return bucket.find({_id: new ObjectID(id)}).toArray().then( async (result) => {
 
                     if (!result || result.length === 0) {
                         throw new Error("Object not found");
@@ -126,11 +129,13 @@ export class GridFSPromise {
                     }
 
                     bucket.openDownloadStream(new ObjectID(id))
-                        .once("error", (error) => {
+                        .once("error", async (error) => {
+                            await client.close();
                             reject(error);
-                        }).once("end", () => {
-                        resolve(`${this.basePath}${filePath}${fileName}`);
-                    })
+                        }).once("end", async () =>  {
+                            await client.close();
+                            resolve(`${this.basePath}${filePath}${fileName}`);
+                        })
                         .pipe(fs.createWriteStream(`${this.basePath}${filePath}${fileName}`));
                 });
 
@@ -154,7 +159,9 @@ export class GridFSPromise {
                 const connection = client.db(this.databaseName);
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
-                bucket.find({_id: new ObjectID(id)}).toArray().then((result: IGridFSObject[]) => {
+                bucket.find({_id: new ObjectID(id)}).toArray().then(async (result: IGridFSObject[]) => {
+                    await client.close();
+
                     if (result.length > 0) {
                         resolve(result[0]);
                     } else {
@@ -199,7 +206,9 @@ export class GridFSPromise {
                         contentType: type,
                         metadata: meta,
                     }))
-                    .on("error", (err) => {
+                    .on("error", async (err) => {
+
+                        await client.close();
 
                         if (fs.existsSync(uploadFilePath) && deleteFile === true) {
                             fs.unlinkSync(uploadFilePath);
@@ -207,16 +216,18 @@ export class GridFSPromise {
 
                         reject(err);
 
-                    }).on("finish", (item: IGridFSObject) => {
+                    }).on("finish",  async(item: IGridFSObject) => {
 
-                    if (fs.existsSync(uploadFilePath) && deleteFile === true) {
-                        fs.unlinkSync(uploadFilePath);
-                    }
+                        await client.close();
 
-                    resolve(item);
+                        if (fs.existsSync(uploadFilePath) && deleteFile === true) {
+                            fs.unlinkSync(uploadFilePath);
+                        }
+
+                        resolve(item);
                 });
 
-            }).catch((err) => {
+            }).catch( (err) => {
                 reject(err);
             });
 
@@ -235,7 +246,8 @@ export class GridFSPromise {
                 const connection = client.db(this.databaseName);
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
-                bucket.delete(new ObjectID(id), ((err) => {
+                bucket.delete(new ObjectID(id), ( async  (err) => {
+                    await client.close();
                     if (err) {
                         reject(err);
                     }

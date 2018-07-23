@@ -60,7 +60,7 @@ describe("GetFile", function () {
     //
     // });
     it("should get FilePath without path", function () {
-        var gridFSPromise = new GridFSPromise_1.GridFSPromise("mongodb://localhost:27017", "tikki", {}, "attachments");
+        var gridFSPromise = new GridFSPromise_1.GridFSPromise("tikki", "mongodb://localhost:27017", {}, "attachments");
         return gridFSPromise.getFile("5a2653f4b908cd7b40e385d3").then(function (result) {
             assert.equal(result, __dirname + "/../cache/203857-76.pdf");
         }).catch(function (error) {

@@ -84,14 +84,22 @@ var GridFSPromise = /** @class */ (function () {
             _this.connectDB().then(function (client) {
                 var connection = client.db(_this.databaseName);
                 var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
-                bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) {
-                    if (result.length > 0) {
-                        resolve(bucket.openDownloadStream(new bson_1.ObjectID(id)));
-                    }
-                    else {
-                        reject();
-                    }
-                });
+                bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, client.close()];
+                            case 1:
+                                _a.sent();
+                                if (result.length > 0) {
+                                    resolve(bucket.openDownloadStream(new bson_1.ObjectID(id)));
+                                }
+                                else {
+                                    reject();
+                                }
+                                return [2 /*return*/];
+                        }
+                    });
+                }); });
             }).catch(function (err) {
                 reject(err);
             });
@@ -110,30 +118,50 @@ var GridFSPromise = /** @class */ (function () {
             _this.connectDB().then(function (client) {
                 var connection = client.db(_this.databaseName);
                 var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
-                return bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) {
-                    if (!result || result.length === 0) {
-                        throw new Error("Object not found");
-                    }
-                    if (!fileName) {
-                        fileName = result[0].filename;
-                    }
-                    if (!filePath) {
-                        filePath = "";
-                    }
-                    if (_this.basePath.charAt(_this.basePath.length - 1) !== "/") {
-                        filePath += "/";
-                    }
-                    if (!fs.existsSync("" + _this.basePath + filePath)) {
-                        throw new Error("Path not found");
-                    }
-                    bucket.openDownloadStream(new bson_1.ObjectID(id))
-                        .once("error", function (error) {
-                        reject(error);
-                    }).once("end", function () {
-                        resolve("" + _this.basePath + filePath + fileName);
-                    })
-                        .pipe(fs.createWriteStream("" + _this.basePath + filePath + fileName));
-                });
+                return bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) { return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        if (!result || result.length === 0) {
+                            throw new Error("Object not found");
+                        }
+                        if (!fileName) {
+                            fileName = result[0].filename;
+                        }
+                        if (!filePath) {
+                            filePath = "";
+                        }
+                        if (this.basePath.charAt(this.basePath.length - 1) !== "/") {
+                            filePath += "/";
+                        }
+                        if (!fs.existsSync("" + this.basePath + filePath)) {
+                            throw new Error("Path not found");
+                        }
+                        bucket.openDownloadStream(new bson_1.ObjectID(id))
+                            .once("error", function (error) { return __awaiter(_this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, client.close()];
+                                    case 1:
+                                        _a.sent();
+                                        reject(error);
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); }).once("end", function () { return __awaiter(_this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, client.close()];
+                                    case 1:
+                                        _a.sent();
+                                        resolve("" + this.basePath + filePath + fileName);
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); })
+                            .pipe(fs.createWriteStream("" + this.basePath + filePath + fileName));
+                        return [2 /*return*/];
+                    });
+                }); });
             }).catch(function (err) {
                 reject(err);
             });
@@ -150,14 +178,22 @@ var GridFSPromise = /** @class */ (function () {
             _this.connectDB().then(function (client) {
                 var connection = client.db(_this.databaseName);
                 var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
-                bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) {
-                    if (result.length > 0) {
-                        resolve(result[0]);
-                    }
-                    else {
-                        reject(new Error("No Object found"));
-                    }
-                });
+                bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, client.close()];
+                            case 1:
+                                _a.sent();
+                                if (result.length > 0) {
+                                    resolve(result[0]);
+                                }
+                                else {
+                                    reject(new Error("No Object found"));
+                                }
+                                return [2 /*return*/];
+                        }
+                    });
+                }); });
             }).catch(function (err) {
                 reject(err);
             });
@@ -187,17 +223,33 @@ var GridFSPromise = /** @class */ (function () {
                     contentType: type,
                     metadata: meta,
                 }))
-                    .on("error", function (err) {
-                    if (fs.existsSync(uploadFilePath) && deleteFile === true) {
-                        fs.unlinkSync(uploadFilePath);
-                    }
-                    reject(err);
-                }).on("finish", function (item) {
-                    if (fs.existsSync(uploadFilePath) && deleteFile === true) {
-                        fs.unlinkSync(uploadFilePath);
-                    }
-                    resolve(item);
-                });
+                    .on("error", function (err) { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, client.close()];
+                            case 1:
+                                _a.sent();
+                                if (fs.existsSync(uploadFilePath) && deleteFile === true) {
+                                    fs.unlinkSync(uploadFilePath);
+                                }
+                                reject(err);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); }).on("finish", function (item) { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, client.close()];
+                            case 1:
+                                _a.sent();
+                                if (fs.existsSync(uploadFilePath) && deleteFile === true) {
+                                    fs.unlinkSync(uploadFilePath);
+                                }
+                                resolve(item);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); });
             }).catch(function (err) {
                 reject(err);
             });
@@ -214,12 +266,20 @@ var GridFSPromise = /** @class */ (function () {
             _this.connectDB().then(function (client) {
                 var connection = client.db(_this.databaseName);
                 var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
-                bucket.delete(new bson_1.ObjectID(id), (function (err) {
-                    if (err) {
-                        reject(err);
-                    }
-                    resolve(true);
-                }));
+                bucket.delete(new bson_1.ObjectID(id), (function (err) { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, client.close()];
+                            case 1:
+                                _a.sent();
+                                if (err) {
+                                    reject(err);
+                                }
+                                resolve(true);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); }));
             }).catch(function (err) {
                 reject(err);
             });
