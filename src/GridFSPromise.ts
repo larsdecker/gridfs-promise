@@ -38,7 +38,6 @@ export class GridFSPromise {
                 mongoOptions?: MongoClientOptions|null,
                 bucketName?: string,
                 basePath?: string) {
-
         this.databaseName = databaseName;
 
         if (mongoUrl) {
@@ -77,7 +76,7 @@ export class GridFSPromise {
 
                 bucket.find({_id: new ObjectID(id)}).toArray().then(async (result) => {
 
-                    await client.close();
+                    // await client.close();
 
                     if (result.length > 0) {
                         resolve(bucket.openDownloadStream(new ObjectID(id)));
@@ -130,10 +129,10 @@ export class GridFSPromise {
 
                     bucket.openDownloadStream(new ObjectID(id))
                         .once("error", async (error) => {
-                            await client.close();
+                            // await client.close();
                             reject(error);
                         }).once("end", async () =>  {
-                            await client.close();
+                            // await client.close();
                             resolve(`${this.basePath}${filePath}${fileName}`);
                         })
                         .pipe(fs.createWriteStream(`${this.basePath}${filePath}${fileName}`));
@@ -160,7 +159,7 @@ export class GridFSPromise {
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
                 bucket.find({_id: new ObjectID(id)}).toArray().then(async (result: IGridFSObject[]) => {
-                    await client.close();
+                    // await client.close();
 
                     if (result.length > 0) {
                         resolve(result[0]);
@@ -208,7 +207,7 @@ export class GridFSPromise {
                     }))
                     .on("error", async (err) => {
 
-                        await client.close();
+                        // await client.close();
 
                         if (fs.existsSync(uploadFilePath) && deleteFile === true) {
                             fs.unlinkSync(uploadFilePath);
@@ -216,9 +215,9 @@ export class GridFSPromise {
 
                         reject(err);
 
-                    }).on("finish",  async(item: IGridFSObject) => {
+                    }).on("finish",  async (item: IGridFSObject) => {
 
-                        await client.close();
+                        // await client.close();
 
                         if (fs.existsSync(uploadFilePath) && deleteFile === true) {
                             fs.unlinkSync(uploadFilePath);
@@ -247,7 +246,7 @@ export class GridFSPromise {
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
                 bucket.delete(new ObjectID(id), ( async  (err) => {
-                    await client.close();
+                    // await client.close();
                     if (err) {
                         reject(err);
                     }
