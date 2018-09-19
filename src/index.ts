@@ -1,1 +1,1 @@
-import {GridFSPromise} from "./GridFSPromise";
+export {GridFSPromise} from "./GridFSPromise";
