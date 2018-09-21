@@ -17,13 +17,15 @@ export class GridFSPromise {
 
     private databaseName: string;
 
-    private readonly connectionUrl: string|undefined;
-    private readonly mongoClientOptions: MongoClientOptions|undefined;
+    private readonly connectionUrl: string | undefined;
+    private readonly mongoClientOptions: MongoClientOptions | undefined;
 
     private basePath: string;
     private bucketName: string;
 
     private _CONNECTION: MongoClient | null = null;
+
+    private closeConnectionAutomatically = false;
 
     /**
      * Constructor
@@ -32,12 +34,14 @@ export class GridFSPromise {
      * @param {MongoClientOptions} mongoOptions
      * @param {string} bucketName
      * @param {string} basePath
+     * @param {boolean} closeConnectionAutomatically
      */
     constructor(databaseName: string,
-                mongoUrl?: string|null,
-                mongoOptions?: MongoClientOptions|null,
+                mongoUrl?: string | null,
+                mongoOptions?: MongoClientOptions | null,
                 bucketName?: string,
-                basePath?: string) {
+                basePath?: string,
+                closeConnectionAutomatically?: boolean) {
 
         this.databaseName = databaseName;
 
@@ -52,6 +56,10 @@ export class GridFSPromise {
         this.bucketName = bucketName || "fs";
 
         this.basePath = basePath || `${__dirname}/../cache`;
+
+        if (closeConnectionAutomatically) {
+            this.closeConnectionAutomatically = closeConnectionAutomatically;
+        }
 
     }
 
@@ -77,7 +85,9 @@ export class GridFSPromise {
 
                 bucket.find({_id: new ObjectID(id)}).toArray().then(async (result) => {
 
-                    await client.close();
+                    if (this.closeConnectionAutomatically === true) {
+                        await client.close();
+                    }
 
                     if (result.length > 0) {
                         resolve(bucket.openDownloadStream(new ObjectID(id)));
@@ -106,7 +116,7 @@ export class GridFSPromise {
                 const connection = client.db(this.databaseName);
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
-                return bucket.find({_id: new ObjectID(id)}).toArray().then( async (result) => {
+                return bucket.find({_id: new ObjectID(id)}).toArray().then(async (result) => {
 
                     if (!result || result.length === 0) {
                         throw new Error("Object not found");
@@ -132,10 +142,10 @@ export class GridFSPromise {
                         .once("error", async (error) => {
                             await client.close();
                             reject(error);
-                        }).once("end", async () =>  {
-                            await client.close();
-                            resolve(`${this.basePath}${filePath}${fileName}`);
-                        })
+                        }).once("end", async () => {
+                        await client.close();
+                        resolve(`${this.basePath}${filePath}${fileName}`);
+                    })
                         .pipe(fs.createWriteStream(`${this.basePath}${filePath}${fileName}`));
                 });
 
@@ -160,7 +170,10 @@ export class GridFSPromise {
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
                 bucket.find({_id: new ObjectID(id)}).toArray().then(async (result: IGridFSObject[]) => {
-                    await client.close();
+
+                    if (this.closeConnectionAutomatically === true) {
+                        await client.close();
+                    }
 
                     if (result.length > 0) {
                         resolve(result[0]);
@@ -208,7 +221,9 @@ export class GridFSPromise {
                     }))
                     .on("error", async (err) => {
 
-                        await client.close();
+                        if (this.closeConnectionAutomatically === true) {
+                            await client.close();
+                        }
 
                         if (fs.existsSync(uploadFilePath) && deleteFile === true) {
                             fs.unlinkSync(uploadFilePath);
@@ -216,18 +231,18 @@ export class GridFSPromise {
 
                         reject(err);
 
-                    }).on("finish",  async(item: IGridFSObject) => {
+                    }).on("finish", async (item: IGridFSObject) => {
 
-                        await client.close();
+                    await client.close();
 
-                        if (fs.existsSync(uploadFilePath) && deleteFile === true) {
-                            fs.unlinkSync(uploadFilePath);
-                        }
+                    if (fs.existsSync(uploadFilePath) && deleteFile === true) {
+                        fs.unlinkSync(uploadFilePath);
+                    }
 
-                        resolve(item);
+                    resolve(item);
                 });
 
-            }).catch( (err) => {
+            }).catch((err) => {
                 reject(err);
             });
 
@@ -246,8 +261,12 @@ export class GridFSPromise {
                 const connection = client.db(this.databaseName);
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
-                bucket.delete(new ObjectID(id), ( async  (err) => {
-                    await client.close();
+                bucket.delete(new ObjectID(id), (async (err) => {
+
+                    if (this.closeConnectionAutomatically === true) {
+                        await client.close();
+                    }
+
                     if (err) {
                         reject(err);
                     }
@@ -258,6 +277,19 @@ export class GridFSPromise {
                 reject(err);
             });
         });
+
+    }
+
+    /**
+     * Close the Connection, if the connection is not needed anymore
+     */
+    public async closeConnection() {
+
+        if (this._CONNECTION) {
+            await this._CONNECTION.close();
+        }
+
+        return true;
 
     }
 

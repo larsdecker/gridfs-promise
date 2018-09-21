@@ -46,9 +46,11 @@ var GridFSPromise = /** @class */ (function () {
      * @param {MongoClientOptions} mongoOptions
      * @param {string} bucketName
      * @param {string} basePath
+     * @param {boolean} closeConnectionAutomatically
      */
-    function GridFSPromise(databaseName, mongoUrl, mongoOptions, bucketName, basePath) {
+    function GridFSPromise(databaseName, mongoUrl, mongoOptions, bucketName, basePath, closeConnectionAutomatically) {
         this._CONNECTION = null;
+        this.closeConnectionAutomatically = false;
         this.databaseName = databaseName;
         if (mongoUrl) {
             this.connectionUrl = mongoUrl;
@@ -58,6 +60,9 @@ var GridFSPromise = /** @class */ (function () {
         }
         this.bucketName = bucketName || "fs";
         this.basePath = basePath || __dirname + "/../cache";
+        if (closeConnectionAutomatically) {
+            this.closeConnectionAutomatically = closeConnectionAutomatically;
+        }
     }
     Object.defineProperty(GridFSPromise.prototype, "CONNECTION", {
         set: function (value) {
@@ -87,9 +92,13 @@ var GridFSPromise = /** @class */ (function () {
                 bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) { return __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4 /*yield*/, client.close()];
+                            case 0:
+                                if (!(this.closeConnectionAutomatically === true)) return [3 /*break*/, 2];
+                                return [4 /*yield*/, client.close()];
                             case 1:
                                 _a.sent();
+                                _a.label = 2;
+                            case 2:
                                 if (result.length > 0) {
                                     resolve(bucket.openDownloadStream(new bson_1.ObjectID(id)));
                                 }
@@ -181,9 +190,13 @@ var GridFSPromise = /** @class */ (function () {
                 bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) { return __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4 /*yield*/, client.close()];
+                            case 0:
+                                if (!(this.closeConnectionAutomatically === true)) return [3 /*break*/, 2];
+                                return [4 /*yield*/, client.close()];
                             case 1:
                                 _a.sent();
+                                _a.label = 2;
+                            case 2:
                                 if (result.length > 0) {
                                     resolve(result[0]);
                                 }
@@ -226,9 +239,13 @@ var GridFSPromise = /** @class */ (function () {
                     .on("error", function (err) { return __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4 /*yield*/, client.close()];
+                            case 0:
+                                if (!(this.closeConnectionAutomatically === true)) return [3 /*break*/, 2];
+                                return [4 /*yield*/, client.close()];
                             case 1:
                                 _a.sent();
+                                _a.label = 2;
+                            case 2:
                                 if (fs.existsSync(uploadFilePath) && deleteFile === true) {
                                     fs.unlinkSync(uploadFilePath);
                                 }
@@ -269,9 +286,13 @@ var GridFSPromise = /** @class */ (function () {
                 bucket.delete(new bson_1.ObjectID(id), (function (err) { return __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4 /*yield*/, client.close()];
+                            case 0:
+                                if (!(this.closeConnectionAutomatically === true)) return [3 /*break*/, 2];
+                                return [4 /*yield*/, client.close()];
                             case 1:
                                 _a.sent();
+                                _a.label = 2;
+                            case 2:
                                 if (err) {
                                     reject(err);
                                 }
@@ -282,6 +303,24 @@ var GridFSPromise = /** @class */ (function () {
                 }); }));
             }).catch(function (err) {
                 reject(err);
+            });
+        });
+    };
+    /**
+     * Close the Connection, if the connection is not needed anymore
+     */
+    GridFSPromise.prototype.closeConnection = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this._CONNECTION) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this._CONNECTION.close()];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2: return [2 /*return*/, true];
+                }
             });
         });
     };

@@ -17,6 +17,7 @@ export declare class GridFSPromise {
     private basePath;
     private bucketName;
     private _CONNECTION;
+    private closeConnectionAutomatically;
     /**
      * Constructor
      * @param {string} mongoUrl
@@ -24,8 +25,9 @@ export declare class GridFSPromise {
      * @param {MongoClientOptions} mongoOptions
      * @param {string} bucketName
      * @param {string} basePath
+     * @param {boolean} closeConnectionAutomatically
      */
-    constructor(databaseName: string, mongoUrl?: string | null, mongoOptions?: MongoClientOptions | null, bucketName?: string, basePath?: string);
+    constructor(databaseName: string, mongoUrl?: string | null, mongoOptions?: MongoClientOptions | null, bucketName?: string, basePath?: string, closeConnectionAutomatically?: boolean);
     CONNECTION: MongoClient;
     readonly connection: MongoClient | null;
     /**
@@ -64,6 +66,10 @@ export declare class GridFSPromise {
      * @return {Promise<boolean>}
      */
     delete(id: string): Promise<boolean>;
+    /**
+     * Close the Connection, if the connection is not needed anymore
+     */
+    closeConnection(): Promise<boolean>;
     /**
      * Connect to the Database and return a promise Object
      */
