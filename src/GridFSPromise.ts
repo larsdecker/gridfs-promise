@@ -1,6 +1,7 @@
 import {ObjectID} from "bson";
 import * as fs from "fs";
 import {GridFSBucket, GridFSBucketReadStream, MongoClient, MongoClientOptions} from "mongodb";
+import * as path from "path";
 
 export interface IGridFSObject {
     _id: ObjectID;
@@ -124,6 +125,10 @@ export class GridFSPromise {
 
                     if (!fileName) {
                         fileName = result[0].filename;
+                    } else {
+                        if (path.extname(fileName) === "") {
+                            fileName = fileName.concat(path.extname(result[0].filename));
+                        }
                     }
 
                     if (!filePath) {

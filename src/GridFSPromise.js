@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var bson_1 = require("bson");
 var fs = require("fs");
 var mongodb_1 = require("mongodb");
+var path = require("path");
 var GridFSPromise = /** @class */ (function () {
     /**
      * Constructor
@@ -135,6 +136,11 @@ var GridFSPromise = /** @class */ (function () {
                         }
                         if (!fileName) {
                             fileName = result[0].filename;
+                        }
+                        else {
+                            if (path.extname(fileName) === "") {
+                                fileName = fileName.concat(path.extname(result[0].filename));
+                            }
                         }
                         if (!filePath) {
                             filePath = "";
