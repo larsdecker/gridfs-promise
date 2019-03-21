@@ -40,6 +40,6 @@
   },
   "dependencies": {
     "es6-promise": "^4.2.6",
-    "mongodb": "^3.1.13"
+    "mongodb": "^3.2.1"
   }
 }
