@@ -1,5 +1,7 @@
 # gridfs-promise
 [![Known Vulnerabilities](https://snyk.io/test/github/larsdecker/gridfs-promise/badge.svg?targetFile=package.json)](https://snyk.io/test/github/larsdecker/gridfs-promise?targetFile=package.json)
+[![Build Status](https://travis-ci.org/larsdecker/gridfs-promise.svg?branch=master)](https://travis-ci.org/larsdecker/gridfs-promise)
+
 This is a simple wrapper for the new MongoDB GridFSBucket-API (http://mongodb.github.io/node-mongodb-native/3.0/tutorials/gridfs/streaming/).
 The old GridStore-API is now deprecated (http://mongodb.github.io/node-mongodb-native/3.0/tutorials/gridfs/gridstore/).
 
