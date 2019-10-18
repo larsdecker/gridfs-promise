@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import {fail} from "assert";
-// if you used the '@types/mocha' method to install mocha type definitions, uncomment the following line
 import "mocha";
 import {MongoClient} from "mongodb";
 import {GridFSPromise} from "../src/GridFSPromise";
@@ -26,7 +25,7 @@ describe("GetFile", () => {
 
     it("should get FilePath without path", () => {
         const gridFSPromise = new GridFSPromise(
-            "tikki",
+            "testdb",
             "mongodb://localhost:27017",
             {useNewUrlParser: true, useUnifiedTopology: true},
             "attachments", __dirname);
@@ -41,14 +40,14 @@ describe("GetFile", () => {
 
     it("should get FilePath with extra /", () => {
         const gridFSPromise = new GridFSPromise(
-            "tikki",
+            "testdb",
             "mongodb://localhost:27017",
             {useNewUrlParser: true, useUnifiedTopology: true},
             "attachments",
             `${__dirname}/../cache/`);
 
         return gridFSPromise.getFile("5b43ce3a58ebb3086dbf9334").then((result) => {
-            assert.equal(result, `${__dirname}/../cache/203857-76.pdf`);
+            assert.strictEqual(result, `${__dirname}/../cache/203857-76.pdf`);
         }).catch((error) => {
             fail(error);
         });
@@ -57,7 +56,7 @@ describe("GetFile", () => {
 
     it("should return invalid Path", () => {
         const gridFSPromise = new GridFSPromise(
-            "tikki",
+            "testdb",
             "mongodb://localhost:27017",
             {useNewUrlParser: true, useUnifiedTopology: true},
             "attachments",
@@ -66,7 +65,7 @@ describe("GetFile", () => {
         return gridFSPromise.getFile("5b43ce3a58ebb3086dbf9334").then((result) => {
             assert.fail("Should not be here");
         }).catch((error) => {
-            assert.deepEqual(error, new Error("Path not found"));
+            assert.strictEqual(error, new Error("Path not found"));
         });
 
     });
@@ -77,12 +76,12 @@ describe("GetObject", () => {
 
     it("should get FileObject", () => {
         const gridFSPromise = new GridFSPromise(
-            "tikki", "mongodb://localhost:27017", {useNewUrlParser: true, useUnifiedTopology: true},
+            "testdb", "mongodb://localhost:27017", {useNewUrlParser: true, useUnifiedTopology: true},
             "attachments", __dirname);
 
         return gridFSPromise.getObject("5b43ce3a58ebb3086dbf9334").then((result) => {
-            assert.equal(result.filename, "203857-76.pdf");
-            assert.equal(result.contentType, "application/pdf");
+            assert.strictEqual(result.filename, "203857-76.pdf");
+            assert.strictEqual(result.contentType, "application/pdf");
         }).catch((error) => {
             fail(error);
         });
@@ -97,8 +96,8 @@ describe("GetObject", () => {
             "attachments", __dirname);
 
         return gridFSPromise.getObject("5b43ce3a58ebb3086dbf9334").then((result) => {
-            assert.equal(result.filename, "203857-76.pdf");
-            assert.equal(result.contentType, "application/pdf");
+            assert.strictEqual(result.filename, "203857-76.pdf");
+            assert.strictEqual(result.contentType, "application/pdf");
         }).catch((error) => {
             fail(error);
         });
@@ -111,14 +110,14 @@ describe("UploadObject", () => {
 
     it("should upload FileObject", () => {
         const gridFSPromise = new GridFSPromise(
-            "tikki",
+            "testdb",
             "mongodb://localhost:27017",
             {useNewUrlParser: true, useUnifiedTopology: true},
             "attachments", __dirname);
 
         return gridFSPromise.uploadFile(`${__dirname}/5MB.zip`, "test.zip", "application/zip", {}).then((result) => {
-            assert.equal(result.filename, "test.zip");
-            assert.equal(result.contentType, "application/zip");
+            assert.strictEqual(result.filename, "test.zip");
+            assert.strictEqual(result.contentType, "application/zip");
         }).catch((error) => {
             fail(error);
         });
@@ -137,7 +136,7 @@ describe("ConnectionTest", () => {
         );
 
         const gridFSPromise = new GridFSPromise(
-            "tikki",
+            "testdb",
             null,
             null,
             "attachments", ".", false);
@@ -146,8 +145,8 @@ describe("ConnectionTest", () => {
         const myConnection = gridFSPromise.connection;
 
         return gridFSPromise.getObject("5b43ce3a58ebb3086dbf9334").then(async (result) => {
-            assert.equal(result.filename, "test.zip");
-            assert.equal(result.contentType, "application/zip");
+            assert.strictEqual(result.filename, "test.zip");
+            assert.strictEqual(result.contentType, "application/zip");
 
             await gridFSPromise.closeConnection();
 
