@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -34,7 +35,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var assert = require("assert");
 var assert_1 = require("assert");
@@ -60,7 +60,7 @@ describe("GetFile", function () {
     //
     // });
     it("should get FilePath without path", function () {
-        var gridFSPromise = new GridFSPromise_1.GridFSPromise("tikki", "mongodb://localhost:27017", {}, "attachments");
+        var gridFSPromise = new GridFSPromise_1.GridFSPromise("tikki", "mongodb://localhost:27017", { useNewUrlParser: true, useUnifiedTopology: true }, "attachments", __dirname);
         return gridFSPromise.getFile("5a2653f4b908cd7b40e385d3").then(function (result) {
             assert.equal(result, __dirname + "/../cache/203857-76.pdf");
         }).catch(function (error) {
@@ -68,7 +68,7 @@ describe("GetFile", function () {
         });
     });
     it("should get FilePath with extra /", function () {
-        var gridFSPromise = new GridFSPromise_1.GridFSPromise("tikki", "mongodb://localhost:27017", { useNewUrlParser: true }, "attachments", __dirname + "/../cache/");
+        var gridFSPromise = new GridFSPromise_1.GridFSPromise("tikki", "mongodb://localhost:27017", { useNewUrlParser: true, useUnifiedTopology: true }, "attachments", __dirname + "/../cache/");
         return gridFSPromise.getFile("5b43ce3a58ebb3086dbf9334").then(function (result) {
             assert.equal(result, __dirname + "/../cache/203857-76.pdf");
         }).catch(function (error) {
@@ -76,7 +76,7 @@ describe("GetFile", function () {
         });
     });
     it("should return invalid Path", function () {
-        var gridFSPromise = new GridFSPromise_1.GridFSPromise("tikki", "mongodb://localhost:27017", { useNewUrlParser: true }, "attachments", __dirname + "/test");
+        var gridFSPromise = new GridFSPromise_1.GridFSPromise("tikki", "mongodb://localhost:27017", { useNewUrlParser: true, useUnifiedTopology: true }, "attachments", __dirname + "/test");
         return gridFSPromise.getFile("5b43ce3a58ebb3086dbf9334").then(function (result) {
             assert.fail("Should not be here");
         }).catch(function (error) {
@@ -86,7 +86,7 @@ describe("GetFile", function () {
 });
 describe("GetObject", function () {
     it("should get FileObject", function () {
-        var gridFSPromise = new GridFSPromise_1.GridFSPromise("tikki", "mongodb://localhost:27017", {}, "attachments", __dirname);
+        var gridFSPromise = new GridFSPromise_1.GridFSPromise("tikki", "mongodb://localhost:27017", { useNewUrlParser: true, useUnifiedTopology: true }, "attachments", __dirname);
         return gridFSPromise.getObject("5b43ce3a58ebb3086dbf9334").then(function (result) {
             assert.equal(result.filename, "203857-76.pdf");
             assert.equal(result.contentType, "application/pdf");
@@ -106,7 +106,7 @@ describe("GetObject", function () {
 });
 describe("UploadObject", function () {
     it("should upload FileObject", function () {
-        var gridFSPromise = new GridFSPromise_1.GridFSPromise("tikki", "mongodb://localhost:27017", { useNewUrlParser: true }, "attachments", __dirname);
+        var gridFSPromise = new GridFSPromise_1.GridFSPromise("tikki", "mongodb://localhost:27017", { useNewUrlParser: true, useUnifiedTopology: true }, "attachments", __dirname);
         return gridFSPromise.uploadFile(__dirname + "/5MB.zip", "test.zip", "application/zip", {}).then(function (result) {
             assert.equal(result.filename, "test.zip");
             assert.equal(result.contentType, "application/zip");
@@ -116,19 +116,29 @@ describe("UploadObject", function () {
     });
 });
 describe("ConnectionTest", function () {
-    it("should get a Connection", function () { return __awaiter(_this, void 0, void 0, function () {
-        var connection, gridFSPromise;
+    it("should get a Connection", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var connection, gridFSPromise, myConnection;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, mongodb_1.MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true })];
+                case 0: return [4 /*yield*/, mongodb_1.MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true, useUnifiedTopology: true })];
                 case 1:
                     connection = _a.sent();
-                    gridFSPromise = new GridFSPromise_1.GridFSPromise("tikki", null, null, "attachments");
+                    gridFSPromise = new GridFSPromise_1.GridFSPromise("tikki", null, null, "attachments", ".", false);
                     gridFSPromise.CONNECTION = connection;
-                    return [2 /*return*/, gridFSPromise.getObject("5b43ce3a58ebb3086dbf9334").then(function (result) {
-                            assert.equal(result.filename, "test.zip");
-                            assert.equal(result.contentType, "application/zip");
-                        }).catch(function (error) {
+                    myConnection = gridFSPromise.connection;
+                    return [2 /*return*/, gridFSPromise.getObject("5b43ce3a58ebb3086dbf9334").then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        assert.equal(result.filename, "test.zip");
+                                        assert.equal(result.contentType, "application/zip");
+                                        return [4 /*yield*/, gridFSPromise.closeConnection()];
+                                    case 1:
+                                        _a.sent();
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); }).catch(function (error) {
                             assert_1.fail(error);
                         })];
             }

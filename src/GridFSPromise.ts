@@ -16,6 +16,14 @@ export interface IGridFSObject {
 
 export class GridFSPromise {
 
+    set CONNECTION(value: MongoClient) {
+        this._CONNECTION = value;
+    }
+
+    get connection(): MongoClient | null {
+        return this._CONNECTION;
+    }
+
     private databaseName: string;
 
     private readonly connectionUrl: string | undefined;
@@ -23,10 +31,9 @@ export class GridFSPromise {
 
     private basePath: string;
     private bucketName: string;
+    private closeConnectionAutomatically = false;
 
     private _CONNECTION: MongoClient | null = null;
-
-    private closeConnectionAutomatically = false;
 
     /**
      * Constructor
@@ -64,14 +71,6 @@ export class GridFSPromise {
 
     }
 
-    set CONNECTION(value: MongoClient) {
-        this._CONNECTION = value;
-    }
-
-    get connection(): MongoClient | null {
-        return this._CONNECTION;
-    }
-
     /**
      * Returns a stream of a file from the GridFS.
      * @param {string} id
@@ -86,7 +85,7 @@ export class GridFSPromise {
 
                 bucket.find({_id: new ObjectID(id)}).toArray().then(async (result) => {
 
-                    if (this.closeConnectionAutomatically === true) {
+                    if (this.closeConnectionAutomatically) {
                         await client.close();
                     }
 
@@ -176,7 +175,7 @@ export class GridFSPromise {
 
                 bucket.find({_id: new ObjectID(id)}).toArray().then(async (result: IGridFSObject[]) => {
 
-                    if (this.closeConnectionAutomatically === true) {
+                    if (this.closeConnectionAutomatically) {
                         await client.close();
                     }
 
@@ -226,11 +225,11 @@ export class GridFSPromise {
                     }))
                     .on("error", async (err) => {
 
-                        if (this.closeConnectionAutomatically === true) {
+                        if (this.closeConnectionAutomatically) {
                             await client.close();
                         }
 
-                        if (fs.existsSync(uploadFilePath) && deleteFile === true) {
+                        if (fs.existsSync(uploadFilePath) && deleteFile) {
                             fs.unlinkSync(uploadFilePath);
                         }
 
@@ -238,9 +237,11 @@ export class GridFSPromise {
 
                     }).on("finish", async (item: IGridFSObject) => {
 
-                    await client.close();
+                    if (this.closeConnectionAutomatically) {
+                        await client.close();
+                    }
 
-                    if (fs.existsSync(uploadFilePath) && deleteFile === true) {
+                    if (fs.existsSync(uploadFilePath) && deleteFile) {
                         fs.unlinkSync(uploadFilePath);
                     }
 
@@ -268,7 +269,7 @@ export class GridFSPromise {
 
                 bucket.delete(new ObjectID(id), (async (err) => {
 
-                    if (this.closeConnectionAutomatically === true) {
+                    if (this.closeConnectionAutomatically) {
                         await client.close();
                     }
 
@@ -311,7 +312,7 @@ export class GridFSPromise {
             throw new Error("No Connection String given. Can´t connect to MongoDB.");
         }
 
-        return this._CONNECTION = await MongoClient.connect(this.connectionUrl, this.mongoClientOptions);
+        return this._CONNECTION = await MongoClient.connect(this.connectionUrl, );
     }
 
 }
