@@ -31,6 +31,19 @@ gridFS.getObject("59e085f272882d728e2fa4c2").then((item) => {
 
 ## Methods
 
+### uploadFileString
+
+By this method you can simple upload files by a base64 string 
+
+```js
+gridFS.getObject("5b43ce3a58ebb3086dbf9334").then((result) => {
+    console.log(result);
+}).catch((error) => {
+    console.error(error);
+});
+```
+
+
 ### getObject
 
 By this method you will simple get the meta-object from the MongoDB as a Promise-Object.

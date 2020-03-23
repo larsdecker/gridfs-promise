@@ -11,8 +11,8 @@ export interface IGridFSObject {
     metadata: object;
 }
 export declare class GridFSPromise {
-    CONNECTION: MongoClient;
-    readonly connection: MongoClient | null;
+    set CONNECTION(value: MongoClient);
+    get connection(): MongoClient | null;
     private databaseName;
     private readonly connectionUrl;
     private readonly mongoClientOptions;
@@ -60,6 +60,15 @@ export declare class GridFSPromise {
      * @return {Promise<IGridFSObject>}
      */
     uploadFile(uploadFilePath: string, targetFileName: string, type: string, meta: object, deleteFile?: boolean): Promise<IGridFSObject>;
+    /**
+     * Upload a file directly from a fs Path
+     * @param {string} uploadData
+     * @param {string} targetFileName
+     * @param {string} type
+     * @param {object} meta
+     * @return {Promise<IGridFSObject>}
+     */
+    uploadFileString(uploadData: string, targetFileName: string, type: string, meta: object): Promise<IGridFSObject>;
     /**
      * Delete an File from the GridFS
      * @param {string} id

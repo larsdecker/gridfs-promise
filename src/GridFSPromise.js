@@ -40,6 +40,7 @@ var bson_1 = require("bson");
 var fs = require("fs");
 var mongodb_1 = require("mongodb");
 var path = require("path");
+var stream_1 = require("stream");
 var GridFSPromise = /** @class */ (function () {
     /**
      * Constructor
@@ -273,6 +274,61 @@ var GridFSPromise = /** @class */ (function () {
                                 if (fs.existsSync(uploadFilePath) && deleteFile) {
                                     fs.unlinkSync(uploadFilePath);
                                 }
+                                resolve(item);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); });
+            }).catch(function (err) {
+                reject(err);
+            });
+        });
+    };
+    /**
+     * Upload a file directly from a fs Path
+     * @param {string} uploadData
+     * @param {string} targetFileName
+     * @param {string} type
+     * @param {object} meta
+     * @return {Promise<IGridFSObject>}
+     */
+    GridFSPromise.prototype.uploadFileString = function (uploadData, targetFileName, type, meta) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            _this.connectDB().then(function (client) {
+                var connection = client.db(_this.databaseName);
+                var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
+                var binary = new Buffer(uploadData, 'base64');
+                var readable = stream_1.Readable.from(binary);
+                readable
+                    .pipe(bucket.openUploadStream(targetFileName, {
+                    contentType: type,
+                    metadata: meta,
+                }))
+                    .on("error", function (err) { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                if (!this.closeConnectionAutomatically) return [3 /*break*/, 2];
+                                return [4 /*yield*/, client.close()];
+                            case 1:
+                                _a.sent();
+                                _a.label = 2;
+                            case 2:
+                                reject(err);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); }).on("finish", function (item) { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                if (!this.closeConnectionAutomatically) return [3 /*break*/, 2];
+                                return [4 /*yield*/, client.close()];
+                            case 1:
+                                _a.sent();
+                                _a.label = 2;
+                            case 2:
                                 resolve(item);
                                 return [2 /*return*/];
                         }

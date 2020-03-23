@@ -2,6 +2,7 @@ import {ObjectID} from "bson";
 import * as fs from "fs";
 import {GridFSBucket, GridFSBucketReadStream, MongoClient, MongoClientOptions} from "mongodb";
 import * as path from "path";
+import {Readable} from "stream";
 
 export interface IGridFSObject {
     _id: ObjectID;
@@ -243,6 +244,58 @@ export class GridFSPromise {
 
                     if (fs.existsSync(uploadFilePath) && deleteFile) {
                         fs.unlinkSync(uploadFilePath);
+                    }
+
+                    resolve(item);
+                });
+
+            }).catch((err) => {
+                reject(err);
+            });
+
+        });
+    }
+
+    /**
+     * Upload a file directly from a fs Path
+     * @param {string} uploadData
+     * @param {string} targetFileName
+     * @param {string} type
+     * @param {object} meta
+     * @return {Promise<IGridFSObject>}
+     */
+    public uploadFileString(uploadData: string,
+                      targetFileName: string,
+                      type: string,
+                      meta: object,
+                      ): Promise<IGridFSObject> {
+
+        return new Promise((resolve, reject) => {
+
+            this.connectDB().then((client) => {
+                const connection = client.db(this.databaseName);
+                const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
+
+                const binary = new Buffer(uploadData, 'base64');
+                const readable = Readable.from(binary);
+
+                readable
+                .pipe(bucket.openUploadStream(targetFileName, {
+                        contentType: type,
+                        metadata: meta,
+                    }))
+                    .on("error", async (err) => {
+
+                        if (this.closeConnectionAutomatically) {
+                            await client.close();
+                        }
+
+                        reject(err);
+
+                    }).on("finish", async (item: IGridFSObject) => {
+
+                    if (this.closeConnectionAutomatically) {
+                        await client.close();
                     }
 
                     resolve(item);
