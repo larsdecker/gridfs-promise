@@ -102,3 +102,33 @@ test.CONNECTION = mongoDBConnection;
 
 ```
 
+
+## Use GridFS Promise together with NestJS
+
+It is really simple to use GridFS Promise together with NestJs.
+
+Install the dependency via `npm install gridfs-promise --save`.
+
+In the Module where you want to use GridFS create a simple Provider to Load the Lib
+
+```typescript
+// sample.module.ts
+providers: [{
+    provide: GridFSPromise,
+    useFactory: async (configService: ConfigService) => {
+      return new GridFSPromise(configService.getString('DB_NAME'), configService.getString('DB_URL'));
+    },
+    inject: [ConfigService],
+  }]
+
+´´´
+
+
+
+
+
+
+
+
+
+
