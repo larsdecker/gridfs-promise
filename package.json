@@ -24,7 +24,7 @@
     "mongo",
     "async"
   ],
-  "version": "6.1.0",
+  "version": "6.2.0",
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
