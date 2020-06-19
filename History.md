@@ -1,3 +1,9 @@
+# 6.2.0
+
++ Fix for autoclose connection on getFile
++ Support newest mongodb driver
+
+
 # 5.0.0
 
 + Fix for auto close Connection of the uploadFile Method

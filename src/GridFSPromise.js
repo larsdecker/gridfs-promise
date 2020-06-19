@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GridFSPromise = void 0;
 var bson_1 = require("bson");
 var fs = require("fs");
 var mongodb_1 = require("mongodb");
@@ -71,14 +72,14 @@ var GridFSPromise = /** @class */ (function () {
         set: function (value) {
             this._CONNECTION = value;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(GridFSPromise.prototype, "connection", {
         get: function () {
             return this._CONNECTION;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     /**
