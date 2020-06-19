@@ -145,11 +145,15 @@ export class GridFSPromise {
 
                     bucket.openDownloadStream(new ObjectID(id))
                         .once("error", async (error) => {
-                            await client.close();
+                            if (this.closeConnectionAutomatically) {
+                                await client.close();
+                            }
                             reject(error);
                         }).once("end", async () => {
-                        await client.close();
-                        resolve(`${this.basePath}${filePath}${fileName}`);
+                            if (this.closeConnectionAutomatically) {
+                                await client.close();
+                            }
+                            resolve(`${this.basePath}${filePath}${fileName}`);
                     })
                         .pipe(fs.createWriteStream(`${this.basePath}${filePath}${fileName}`));
                 });

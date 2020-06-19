@@ -157,9 +157,13 @@ var GridFSPromise = /** @class */ (function () {
                             .once("error", function (error) { return __awaiter(_this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
-                                    case 0: return [4 /*yield*/, client.close()];
+                                    case 0:
+                                        if (!this.closeConnectionAutomatically) return [3 /*break*/, 2];
+                                        return [4 /*yield*/, client.close()];
                                     case 1:
                                         _a.sent();
+                                        _a.label = 2;
+                                    case 2:
                                         reject(error);
                                         return [2 /*return*/];
                                 }
@@ -167,9 +171,13 @@ var GridFSPromise = /** @class */ (function () {
                         }); }).once("end", function () { return __awaiter(_this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
-                                    case 0: return [4 /*yield*/, client.close()];
+                                    case 0:
+                                        if (!this.closeConnectionAutomatically) return [3 /*break*/, 2];
+                                        return [4 /*yield*/, client.close()];
                                     case 1:
                                         _a.sent();
+                                        _a.label = 2;
+                                    case 2:
                                         resolve("" + this.basePath + filePath + fileName);
                                         return [2 /*return*/];
                                 }
