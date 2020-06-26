@@ -36,6 +36,9 @@ export class GridFSPromise {
 
     private _CONNECTION: MongoClient | null = null;
 
+
+    public maxTimeMS = 3000;
+
     /**
      * Constructor
      * @param {string} mongoUrl
@@ -84,7 +87,7 @@ export class GridFSPromise {
                 const connection = client.db(this.databaseName);
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
-                bucket.find({_id: new ObjectID(id)}).toArray().then(async (result) => {
+                bucket.find({_id: new ObjectID(id)}, {maxTimeMS: this.maxTimeMS}).toArray().then(async (result) => {
 
                     if (this.closeConnectionAutomatically) {
                         await client.close();
@@ -117,7 +120,7 @@ export class GridFSPromise {
                 const connection = client.db(this.databaseName);
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
-                return bucket.find({_id: new ObjectID(id)}).toArray().then(async (result) => {
+                return bucket.find({_id: new ObjectID(id)}, {maxTimeMS: this.maxTimeMS}).toArray().then(async (result) => {
 
                     if (!result || result.length === 0) {
                         throw new Error("Object not found");
@@ -178,7 +181,7 @@ export class GridFSPromise {
                 const connection = client.db(this.databaseName);
                 const bucket = new GridFSBucket(connection, {bucketName: this.bucketName});
 
-                bucket.find({_id: new ObjectID(id)}).toArray().then(async (result: IGridFSObject[]) => {
+                bucket.find({_id: new ObjectID(id)}, {maxTimeMS: this.maxTimeMS}).toArray().then(async (result: IGridFSObject[]) => {
 
                     if (this.closeConnectionAutomatically) {
                         await client.close();

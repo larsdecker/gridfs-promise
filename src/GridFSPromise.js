@@ -55,6 +55,7 @@ var GridFSPromise = /** @class */ (function () {
     function GridFSPromise(databaseName, mongoUrl, mongoOptions, bucketName, basePath, closeConnectionAutomatically) {
         this.closeConnectionAutomatically = false;
         this._CONNECTION = null;
+        this.maxTimeMS = 3000;
         this.databaseName = databaseName;
         if (mongoUrl) {
             this.connectionUrl = mongoUrl;
@@ -93,7 +94,7 @@ var GridFSPromise = /** @class */ (function () {
             _this.connectDB().then(function (client) {
                 var connection = client.db(_this.databaseName);
                 var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
-                bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) { return __awaiter(_this, void 0, void 0, function () {
+                bucket.find({ _id: new bson_1.ObjectID(id) }, { maxTimeMS: _this.maxTimeMS }).toArray().then(function (result) { return __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
@@ -131,7 +132,7 @@ var GridFSPromise = /** @class */ (function () {
             _this.connectDB().then(function (client) {
                 var connection = client.db(_this.databaseName);
                 var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
-                return bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) { return __awaiter(_this, void 0, void 0, function () {
+                return bucket.find({ _id: new bson_1.ObjectID(id) }, { maxTimeMS: _this.maxTimeMS }).toArray().then(function (result) { return __awaiter(_this, void 0, void 0, function () {
                     var _this = this;
                     return __generator(this, function (_a) {
                         if (!result || result.length === 0) {
@@ -204,7 +205,7 @@ var GridFSPromise = /** @class */ (function () {
             _this.connectDB().then(function (client) {
                 var connection = client.db(_this.databaseName);
                 var bucket = new mongodb_1.GridFSBucket(connection, { bucketName: _this.bucketName });
-                bucket.find({ _id: new bson_1.ObjectID(id) }).toArray().then(function (result) { return __awaiter(_this, void 0, void 0, function () {
+                bucket.find({ _id: new bson_1.ObjectID(id) }, { maxTimeMS: _this.maxTimeMS }).toArray().then(function (result) { return __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:

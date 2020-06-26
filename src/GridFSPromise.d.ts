@@ -20,6 +20,7 @@ export declare class GridFSPromise {
     private bucketName;
     private closeConnectionAutomatically;
     private _CONNECTION;
+    maxTimeMS: number;
     /**
      * Constructor
      * @param {string} mongoUrl
