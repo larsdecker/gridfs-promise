@@ -24,19 +24,19 @@
     "mongo",
     "async"
   ],
-  "version": "6.3.0",
+  "version": "6.3.1",
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
-    "@types/mongodb": "^3.5.22",
-    "@types/node": "^14.0.13",
+    "@types/mongodb": "^3.5.25",
+    "@types/node": "^14.0.24",
     "chai": "^4.2.0",
     "jsdoc": "^3.6.4",
     "mocha": "^8.0.1",
     "ts-node": "^8.10.2",
     "tsd-jsdoc": "^2.5.0",
     "tslint": "^6.1.2",
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.7"
   },
   "dependencies": {
     "mongodb": "^3.5.9"
