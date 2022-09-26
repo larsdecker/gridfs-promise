@@ -24,7 +24,7 @@
     "mongo",
     "async"
   ],
-  "version": "6.3.8",
+  "version": "6.3.9",
   "scripts": {
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\""
