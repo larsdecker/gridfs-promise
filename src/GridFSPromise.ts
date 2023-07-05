@@ -1,25 +1,16 @@
-import { ObjectID } from 'bson';
 import * as fs from 'fs';
 import {
-  Document,
   GridFSBucket,
   GridFSBucketReadStream,
   MongoClient,
   MongoClientOptions,
+  ObjectId
 } from 'mongodb';
 import * as path from 'path';
 import { Readable } from 'stream';
+import { IGridFSObject } from "./GridFSPromiseType";
 
-export interface IGridFSObject {
-  _id: ObjectID;
-  length: number;
-  chunkSize: number;
-  uploadDate: Date;
-  md5?: string;
-  filename: string;
-  contentType?: string | undefined;
-  metadata?: Document | undefined;
-}
+
 
 export class GridFSPromise {
   set CONNECTION(value: MongoClient) {
@@ -58,7 +49,7 @@ export class GridFSPromise {
     mongoOptions?: MongoClientOptions | null,
     bucketName?: string,
     basePath?: string,
-    closeConnectionAutomatically?: boolean,
+    closeConnectionAutomatically?: boolean
   ) {
     this.databaseName = databaseName;
 
@@ -90,11 +81,11 @@ export class GridFSPromise {
         .then((client) => {
           const connection = client.db(this.databaseName);
           const bucket = new GridFSBucket(connection, {
-            bucketName: this.bucketName,
+            bucketName: this.bucketName
           });
 
           bucket
-            .find({ _id: new ObjectID(id) }, { maxTimeMS: this.maxTimeMS })
+            .find({ _id: new ObjectId(id) }, { maxTimeMS: this.maxTimeMS })
             .toArray()
             .then(async (result) => {
               if (this.closeConnectionAutomatically) {
@@ -102,7 +93,7 @@ export class GridFSPromise {
               }
 
               if (result.length > 0) {
-                resolve(bucket.openDownloadStream(new ObjectID(id)));
+                resolve(bucket.openDownloadStream(new ObjectId(id)));
               } else {
                 reject();
               }
@@ -124,18 +115,18 @@ export class GridFSPromise {
   public getFile(
     id: string,
     fileName?: string,
-    filePath?: string,
+    filePath?: string
   ): Promise<string> {
     return new Promise((resolve, reject) => {
       this.connectDB()
         .then((client) => {
           const connection = client.db(this.databaseName);
           const bucket = new GridFSBucket(connection, {
-            bucketName: this.bucketName,
+            bucketName: this.bucketName
           });
 
           return bucket
-            .find({ _id: new ObjectID(id) }, { maxTimeMS: this.maxTimeMS })
+            .find({ _id: new ObjectId(id) }, { maxTimeMS: this.maxTimeMS })
             .toArray()
             .then(async (result) => {
               if (!result || result.length === 0) {
@@ -163,7 +154,7 @@ export class GridFSPromise {
               }
 
               bucket
-                .openDownloadStream(new ObjectID(id))
+                .openDownloadStream(new ObjectId(id))
                 .once('error', async (error) => {
                   if (this.closeConnectionAutomatically) {
                     await client.close();
@@ -177,9 +168,7 @@ export class GridFSPromise {
                   resolve(`${this.basePath}${filePath}${fileName}`);
                 })
                 .pipe(
-                  fs.createWriteStream(
-                    `${this.basePath}${filePath}${fileName}`,
-                  ),
+                  fs.createWriteStream(`${this.basePath}${filePath}${fileName}`)
                 );
             });
         })
@@ -200,11 +189,11 @@ export class GridFSPromise {
         .then((client) => {
           const connection = client.db(this.databaseName);
           const bucket = new GridFSBucket(connection, {
-            bucketName: this.bucketName,
+            bucketName: this.bucketName
           });
 
           bucket
-            .find({ _id: new ObjectID(id) }, { maxTimeMS: this.maxTimeMS })
+            .find({ _id: new ObjectId(id) }, { maxTimeMS: this.maxTimeMS })
             .toArray()
             .then(async (result: IGridFSObject[]) => {
               if (this.closeConnectionAutomatically) {
@@ -238,7 +227,7 @@ export class GridFSPromise {
     targetFileName: string,
     type: string,
     meta: object,
-    deleteFile: boolean = true,
+    deleteFile: boolean = true
   ): Promise<IGridFSObject> {
     return new Promise((resolve, reject) => {
       if (!fs.existsSync(uploadFilePath)) {
@@ -249,15 +238,15 @@ export class GridFSPromise {
         .then((client) => {
           const connection = client.db(this.databaseName);
           const bucket = new GridFSBucket(connection, {
-            bucketName: this.bucketName,
+            bucketName: this.bucketName
           });
 
           fs.createReadStream(uploadFilePath)
             .pipe(
               bucket.openUploadStream(targetFileName, {
                 contentType: type,
-                metadata: meta,
-              }),
+                metadata: meta
+              })
             )
             .on('error', async (err) => {
               if (this.closeConnectionAutomatically) {
@@ -300,25 +289,25 @@ export class GridFSPromise {
     uploadData: string,
     targetFileName: string,
     type: string,
-    meta: object,
+    meta: object
   ): Promise<IGridFSObject> {
     return new Promise((resolve, reject) => {
       this.connectDB()
         .then((client) => {
           const connection = client.db(this.databaseName);
           const bucket = new GridFSBucket(connection, {
-            bucketName: this.bucketName,
+            bucketName: this.bucketName
           });
 
-          const binary = new Buffer(uploadData, 'base64');
+          const binary = Buffer.from(uploadData, 'base64');
           const readable = Readable.from(binary);
 
           readable
             .pipe(
               bucket.openUploadStream(targetFileName, {
                 contentType: type,
-                metadata: meta,
-              }),
+                metadata: meta
+              })
             )
             .on('error', async (err) => {
               if (this.closeConnectionAutomatically) {
@@ -352,19 +341,13 @@ export class GridFSPromise {
         .then((client) => {
           const connection = client.db(this.databaseName);
           const bucket = new GridFSBucket(connection, {
-            bucketName: this.bucketName,
+            bucketName: this.bucketName
           });
 
-          bucket.delete(new ObjectID(id), async (err) => {
-            if (this.closeConnectionAutomatically) {
-              await client.close();
-            }
-
-            if (err) {
-              reject(err);
-            }
-            resolve(true);
-          });
+          bucket
+            .delete(new ObjectId(id))
+            .then(() => resolve(true))
+            .catch((err) => reject(err));
         })
         .catch((err) => {
           reject(err);

@@ -2,8 +2,7 @@
   "name": "gridfs-promise",
   "description": "Uses the native GridFSBucket-Api from the new MongoDB NodeJS Driver and wrap it as Promise-Objects",
   "author": "Lars Decker",
-  "main": "./src/GridFSPromise",
-  "types": "./src/GridFSPromise.d.ts",
+  "main": "./dist/src/GridFSPromise",
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
@@ -24,7 +23,7 @@
     "mongo",
     "async"
   ],
-  "version": "6.3.10",
+  "version": "7.0.0-dev",
   "scripts": {
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\""
@@ -32,19 +31,20 @@
   "devDependencies": {
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^18.16.6",
-    "@typescript-eslint/eslint-plugin": "^5.59.5",
-    "@typescript-eslint/parser": "^5.59.5",
+    "@types/node": "^20.3.3",
+    "@typescript-eslint/eslint-plugin": "^5.61.0",
+    "@typescript-eslint/parser": "^5.61.0",
     "chai": "^4.3.7",
-    "eslint": "^8.40.0",
+    "eslint": "^8.44.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.8",
     "jsdoc": "^4.0.2",
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.5"
+    "typescript": "^5.1.6"
   },
   "dependencies": {
-    "mongodb": "^5.4.0"
+    "mongodb": "^5.6.0"
   }
 }

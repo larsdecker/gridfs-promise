@@ -2,14 +2,21 @@
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
-    "strict": true,
-    "target": "es5",
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es6",
     "sourceMap": true,
-    "lib": ["es2015"]
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "lib": [
+      "es2020"
+    ],
+    "paths": {}
   },
   "exclude": [
     "node_modules",
-    "./src/*.d.ts",
-    "./src/*.js"
+    "dist"
   ]
 }
