@@ -1,4 +1,4 @@
-import { ObjectID } from 'bson';
+import { ObjectId } from 'bson';
 import * as fs from 'fs';
 import {
   Document,
@@ -11,7 +11,7 @@ import * as path from 'path';
 import { Readable } from 'stream';
 
 export interface IGridFSObject {
-  _id: ObjectID;
+  _id: ObjectId;
   length: number;
   chunkSize: number;
   uploadDate: Date;
@@ -94,7 +94,7 @@ export class GridFSPromise {
           });
 
           bucket
-            .find({ _id: new ObjectID(id) }, { maxTimeMS: this.maxTimeMS })
+            .find({ _id: new ObjectId(id) }, { maxTimeMS: this.maxTimeMS })
             .toArray()
             .then(async (result) => {
               if (this.closeConnectionAutomatically) {
@@ -102,7 +102,7 @@ export class GridFSPromise {
               }
 
               if (result.length > 0) {
-                resolve(bucket.openDownloadStream(new ObjectID(id)));
+                resolve(bucket.openDownloadStream(new ObjectId(id)));
               } else {
                 reject();
               }
@@ -135,7 +135,7 @@ export class GridFSPromise {
           });
 
           return bucket
-            .find({ _id: new ObjectID(id) }, { maxTimeMS: this.maxTimeMS })
+            .find({ _id: new ObjectId(id) }, { maxTimeMS: this.maxTimeMS })
             .toArray()
             .then(async (result) => {
               if (!result || result.length === 0) {
@@ -163,7 +163,7 @@ export class GridFSPromise {
               }
 
               bucket
-                .openDownloadStream(new ObjectID(id))
+                .openDownloadStream(new ObjectId(id))
                 .once('error', async (error) => {
                   if (this.closeConnectionAutomatically) {
                     await client.close();
@@ -204,7 +204,7 @@ export class GridFSPromise {
           });
 
           bucket
-            .find({ _id: new ObjectID(id) }, { maxTimeMS: this.maxTimeMS })
+            .find({ _id: new ObjectId(id) }, { maxTimeMS: this.maxTimeMS })
             .toArray()
             .then(async (result: IGridFSObject[]) => {
               if (this.closeConnectionAutomatically) {
@@ -346,30 +346,17 @@ export class GridFSPromise {
    * @param {string} id
    * @return {Promise<boolean>}
    */
-  public delete(id: string): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      this.connectDB()
-        .then((client) => {
-          const connection = client.db(this.databaseName);
-          const bucket = new GridFSBucket(connection, {
-            bucketName: this.bucketName,
-          });
-
-          bucket.delete(new ObjectID(id), async (err) => {
-            if (this.closeConnectionAutomatically) {
-              await client.close();
-            }
-
-            if (err) {
-              reject(err);
-            }
-            resolve(true);
-          });
-        })
-        .catch((err) => {
-          reject(err);
-        });
+  public async delete(id: string): Promise<boolean> {
+    const client = await this.connectDB();
+    const connection = client.db(this.databaseName);
+    const bucket = new GridFSBucket(connection, {
+      bucketName: this.bucketName,
     });
+    await bucket.delete(new ObjectId(id));
+    if (this.closeConnectionAutomatically) {
+      await client.close();
+    }
+    return true;
   }
 
   /**
