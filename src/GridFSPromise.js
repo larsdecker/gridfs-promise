@@ -412,7 +412,7 @@ var GridFSPromise = /** @class */ (function () {
      */
     GridFSPromise.prototype.delete = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var client, connection, bucket;
+            var client, connection, bucket, err_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.connectDB()];
@@ -422,15 +422,28 @@ var GridFSPromise = /** @class */ (function () {
                         bucket = new mongodb_1.GridFSBucket(connection, {
                             bucketName: this.bucketName,
                         });
-                        return [4 /*yield*/, bucket.delete(new bson_1.ObjectId(id))];
+                        _a.label = 2;
                     case 2:
-                        _a.sent();
-                        if (!this.closeConnectionAutomatically) return [3 /*break*/, 4];
-                        return [4 /*yield*/, client.close()];
+                        _a.trys.push([2, 4, , 7]);
+                        return [4 /*yield*/, bucket.delete(new bson_1.ObjectId(id))];
                     case 3:
                         _a.sent();
-                        _a.label = 4;
-                    case 4: return [2 /*return*/, true];
+                        return [3 /*break*/, 7];
+                    case 4:
+                        err_1 = _a.sent();
+                        if (!this.closeConnectionAutomatically) return [3 /*break*/, 6];
+                        return [4 /*yield*/, client.close()];
+                    case 5:
+                        _a.sent();
+                        _a.label = 6;
+                    case 6: return [2 /*return*/, false];
+                    case 7:
+                        if (!this.closeConnectionAutomatically) return [3 /*break*/, 9];
+                        return [4 /*yield*/, client.close()];
+                    case 8:
+                        _a.sent();
+                        _a.label = 9;
+                    case 9: return [2 /*return*/, true];
                 }
             });
         });

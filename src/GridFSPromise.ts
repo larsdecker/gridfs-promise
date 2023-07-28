@@ -352,7 +352,14 @@ export class GridFSPromise {
     const bucket = new GridFSBucket(connection, {
       bucketName: this.bucketName,
     });
-    await bucket.delete(new ObjectId(id));
+    try {
+      await bucket.delete(new ObjectId(id));
+    } catch (err) {
+      if (this.closeConnectionAutomatically) {
+        await client.close();
+      }
+      return false;
+    }
     if (this.closeConnectionAutomatically) {
       await client.close();
     }
