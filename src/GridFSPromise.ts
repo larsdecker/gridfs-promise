@@ -1,4 +1,4 @@
-import { ObjectID } from 'bson';
+import { ObjectId } from 'mongodb';
 import * as fs from 'fs';
 import {
   Document,
@@ -11,7 +11,7 @@ import * as path from 'path';
 import { Readable } from 'stream';
 
 export interface IGridFSObject {
-  _id: ObjectID;
+  _id: ObjectId;
   length: number;
   chunkSize: number;
   uploadDate: Date;
@@ -94,7 +94,7 @@ export class GridFSPromise {
           });
 
           bucket
-            .find({ _id: new ObjectID(id) }, { maxTimeMS: this.maxTimeMS })
+            .find({ _id: new ObjectId(id) }, { maxTimeMS: this.maxTimeMS })
             .toArray()
             .then(async (result) => {
               if (this.closeConnectionAutomatically) {
@@ -102,7 +102,7 @@ export class GridFSPromise {
               }
 
               if (result.length > 0) {
-                resolve(bucket.openDownloadStream(new ObjectID(id)));
+                resolve(bucket.openDownloadStream(new ObjectId(id)));
               } else {
                 reject();
               }
@@ -135,7 +135,7 @@ export class GridFSPromise {
           });
 
           return bucket
-            .find({ _id: new ObjectID(id) }, { maxTimeMS: this.maxTimeMS })
+            .find({ _id: new ObjectId(id) }, { maxTimeMS: this.maxTimeMS })
             .toArray()
             .then(async (result) => {
               if (!result || result.length === 0) {
@@ -163,7 +163,7 @@ export class GridFSPromise {
               }
 
               bucket
-                .openDownloadStream(new ObjectID(id))
+                .openDownloadStream(new ObjectId(id))
                 .once('error', async (error) => {
                   if (this.closeConnectionAutomatically) {
                     await client.close();
@@ -204,7 +204,7 @@ export class GridFSPromise {
           });
 
           bucket
-            .find({ _id: new ObjectID(id) }, { maxTimeMS: this.maxTimeMS })
+            .find({ _id: new ObjectId(id) }, { maxTimeMS: this.maxTimeMS })
             .toArray()
             .then(async (result: IGridFSObject[]) => {
               if (this.closeConnectionAutomatically) {
@@ -310,7 +310,7 @@ export class GridFSPromise {
             bucketName: this.bucketName,
           });
 
-          const binary = new Buffer(uploadData, 'base64');
+          const binary = Buffer.from(uploadData, 'base64');
           const readable = Readable.from(binary);
 
           readable
@@ -355,7 +355,7 @@ export class GridFSPromise {
             bucketName: this.bucketName,
           });
 
-          bucket.delete(new ObjectID(id), async (err) => {
+          bucket.delete(new ObjectId(id), async (err) => {
             if (this.closeConnectionAutomatically) {
               await client.close();
             }
@@ -395,6 +395,9 @@ export class GridFSPromise {
       throw new Error('No Connection String given. Can´t connect to MongoDB.');
     }
 
-    return (this._CONNECTION = await MongoClient.connect(this.connectionUrl));
+    return (this._CONNECTION = await new MongoClient(
+      this.connectionUrl,
+      this.mongoClientOptions,
+    ).connect());
   }
 }

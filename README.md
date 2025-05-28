@@ -14,12 +14,15 @@ That is simple
 ## Usage
 
 ```js
-const mongoOptions: MongoClientOptions = {
-  autoReconnect: true,
-  useNewUrlParser: true
-};
+const mongoOptions: MongoClientOptions = {};
 
-let gridFS = new GridFSPromise("test", "mongodb://localhost:27017/test", mongoOptions, __dirname, "attachments");
+let gridFS = new GridFSPromise(
+  "test",
+  "mongodb://localhost:27017/test",
+  mongoOptions,
+  __dirname,
+  "attachments",
+);
 gridFS.getObject("59e085f272882d728e2fa4c2").then((item) => {
     console.log(item);
 }).catch((err) => {
