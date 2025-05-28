@@ -27,7 +27,8 @@
   "version": "6.3.10",
   "scripts": {
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "format": "prettier --write \"src/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "test": "NODE_PATH=tests/stubs node --test tests/*.test.js"
   },
   "devDependencies": {
     "@types/chai": "^4.3.5",
